@@ -7,6 +7,7 @@ import rapidoImage2 from "../assets/rapidoImage2.jpg";
 import rapidoImage3 from "../assets/rapidoImage3.jpg";
 import rapidoImage1 from "../assets/rapidoImage1.webp";   
 import { FaUpload } from "react-icons/fa";
+import axios from "axios";
 
 const supportedCities = [
   "Bangalore", "Hyderabad", "Chennai", "Pune",
@@ -79,12 +80,15 @@ const RegisterPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("Form Submitted:", formData);
-    // Clear localStorage after submission if desired
-    // localStorage.removeItem("formData");
-    // localStorage.removeItem("page");
+    try{
+        const response = await axios.post('http://localhost:5000/driver/add-driver', formData);
+        console.log(formData);
+        console.log("Form submitted successfully:", response.data);
+    }catch(error){
+        console.error("Error during form submission:", error);
+    }
   };
 
   const images = [
