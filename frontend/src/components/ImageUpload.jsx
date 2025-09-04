@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import axios from 'axios';
 
 function ImageUpload({getFunction, getValue}) {
-
+  
   const fetchImages = async () => {
     const res = await axios.get('http://localhost:5000/upload/images');
     getFunction(res.data);

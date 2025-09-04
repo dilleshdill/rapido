@@ -6,6 +6,10 @@ import axios from "axios";
 
 
 const HomePage = () => {
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [dropValue, setDropValue] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [dropSuggestions, setDropSuggestions] = useState([]);
   
   const { user, isSignedIn } = useUser(); 
 
