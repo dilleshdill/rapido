@@ -1,14 +1,12 @@
-const express = require("express");
-const cors = require("cors");
-const userRoutes = require("./routes/userRoutes");
-const uploadRoutes = require("./routes/uploadRoute.js");
-
+import express from "express";
+import cors from "cors";
+import userRoutes from "./routes/userRoutes.js";
+import uploadRoutes from "./routes/uploadRoute.js";
 
 const app = express();
 
-app.use(cors({ origin: "http://localhost:5173" })); // allow frontend
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
-app.use(cors());
 
 app.use("/", userRoutes);
 app.use("/upload", uploadRoutes);
