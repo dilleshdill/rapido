@@ -3,23 +3,21 @@ import React, { useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
+import ImageUpload from "../components/ImageUpload";
 
-// import rapidoImage2 from "../assets/rapidoImage2.webp"
-// import rapidoImage3 from "../assets/rapidoImage3.jpg"
-// import rapidoImage4 from "../assets/rapidoImage4.jpg"
+import rapidoImage2 from "../assets/rapidoImage2.jpg"
+import rapidoImage3 from "../assets/rapidoImage3.jpg"
+import rapidoImage1 from "../assets/rapidoImage1.webp"   
 import { FaUpload } from "react-icons/fa";
-
 
 const supportedCities = [
   "Bangalore", "Hyderabad", "Chennai", "Pune",
   "Mumbai", "Delhi", "Kolkata", "Jaipur", "Ahmedabad"
 ];
 
-
-
-
 const RegisterPage = () => {
-    const [state,setState] = useState(1)
+    const [state,setState] = useState(4)
+    const [files, setFiles] = useState("")
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -58,22 +56,11 @@ const RegisterPage = () => {
         
     };
 
-    // const images = [
-    //     rapidoImage4,
-    //     rapidoImage2,
-    //     rapidoImage3
-    // ];
-
-   
-    const [files, setFiles] = useState({
-        license: null,
-        
-    });
-    
-
-  const handleFileChange = (e, type) => {
-    setFiles({ ...files, [type]: e.target.files[0] });
-  };
+    const images = [
+        rapidoImage1,
+        rapidoImage2,
+        rapidoImage3
+    ];
 
     const [search, setSearch] = useState("");
     const [city, setCity] = useState("");
@@ -83,11 +70,16 @@ const RegisterPage = () => {
         c.toLowerCase().includes(search.toLowerCase())
     );
 
+    const getImage = (data) => {
+        setFormData({...formData, drivingLicenceImage1: data[0].url})
+         
+    }
+
     return (
         <div className="max-h-screen min-w-screen flex items-center justify-center p-4">
         <div className="w-full max-w-[1200px] bg-orange-300 rounded-3xl shadow-2xl flex flex-col md:flex-row">
         <div className="w-full md:w-1/2 rounded-3xl bg-white">
-            {/* <Slider {...settings}>
+            <Slider {...settings}>
                 {images.map((src, index) => (
                 <div key={index} className="relative h-[400px] md:h-[600px] w-full">
                     <img
@@ -98,7 +90,7 @@ const RegisterPage = () => {
                     
                 </div>
                 ))}
-            </Slider> */}
+            </Slider>
         </div>
             
             <div className="w-full md:w-1/2 p-6 md:p-12 flex items-center justify-center">
@@ -304,9 +296,27 @@ const RegisterPage = () => {
                     
                                     <input
                                     type="file"
+                                    
                                     className="hidden"
-                                    onChange={(e) => handleFileChange(e, "license")}
+                                    onChange={(e) => {
+                                        console.log(e.target.files[0])
+                                        setFiles(e.target.files[0])
+                                    }}
                                     />
+                                    {
+                                        files && <ImageUpload getFunction={getImage} getValue={files}/>
+                                    }
+                                    {
+                                    files && (
+                                        <div className="mt-4">
+                                        <img
+                                            src={URL.createObjectURL(files)}
+                                            alt="preview"
+                                            className="w-40 h-40 object-cover rounded-lg shadow-md"
+                                        />
+                                        </div>
+                                    )}
+
                                     </label>
                                     <label className="flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-purple-600 hover:bg-purple-50 transition-colors">
                                     <FaUpload className="text-gray-400 mr-3" />
@@ -316,7 +326,7 @@ const RegisterPage = () => {
                                     <input
                                     type="file"
                                     className="hidden"
-                                    onChange={(e) => handleFileChange(e, "license")}
+                            
                                     />
                                     </label>
                                 </div>
@@ -333,7 +343,7 @@ const RegisterPage = () => {
                                     
                                     className=" text-black border-2 border-gray-400 p-2 rounded-lg w-1/3 hover:bg-gray-400 hover:text-white  transition-colors disabled:opacity-50 flex justify-center"
                                     onClick={() => setState(5)}
-                                    disabled={!files.license} 
+                                    
                                 >
                                     Next
                                 </div>
@@ -359,7 +369,7 @@ const RegisterPage = () => {
                                     <input
                                     type="file"
                                     className="hidden"
-                                    onChange={(e) => handleFileChange(e, "license")}
+                                    
                                     />
                                     </label>
                                     <label className="flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-purple-600 hover:bg-purple-50 transition-colors">
@@ -370,7 +380,7 @@ const RegisterPage = () => {
                                     <input
                                     type="file"
                                     className="hidden"
-                                    onChange={(e) => handleFileChange(e, "license")}
+                                    
                                     />
                                     </label>
                                 </div>
@@ -387,7 +397,7 @@ const RegisterPage = () => {
                                     
                                     className=" text-black border-2 border-gray-400 p-2 rounded-lg w-1/3 hover:bg-gray-400 hover:text-white  transition-colors disabled:opacity-50 flex justify-center"
                                     onClick={() => setState(5)}
-                                    disabled={!files.license} 
+                                    
                                 >
                                     Register
                                 </div>
