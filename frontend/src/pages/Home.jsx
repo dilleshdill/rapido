@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import { SignOutButton, useUser } from "@clerk/clerk-react";
 
 import axios from "axios";
@@ -35,6 +35,43 @@ const HomePage = () => {
       }
     } catch(error) {
       console.error("Error fetching user data:", error);
+    }
+  };
+
+  
+  const fetchSuggestions = async (input) => {
+    if (!input) {
+      setSuggestions([]);
+      return;
+    }
+
+    const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(input)}&limit=5`;
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data && data.features) {
+      setSuggestions(data.features);
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const fetchDropSuggestion = async (input) => {
+    if (!input) {
+      setDropSuggestions([]);
+      return;
+    }
+
+    const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(input)}&limit=5`;
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data && data.features) {
+      setDropSuggestions(data.features);
+    } else {
+      setDropSuggestions([]);
     }
   };
 
@@ -76,22 +113,66 @@ const HomePage = () => {
             <span className="text-black text-lg">📍</span>
             <input
               type="text"
+              value={selectedLocation}
               placeholder="Enter Pickup Location"
-              
+              onChange={(e) =>{
+                setSelectedLocation(e.target.value) 
+                fetchSuggestions(e.target.value)}}
               className="w-full outline-none text-gray-700"
             />
           </div>
+          {suggestions.length > 0 && (
+        <ul
+          className="border border-gray-300 rounded-lg p-2 max-h-48 overflow-y-auto bg-white"
+        >
+          {suggestions.map((s, idx) => (
+            <li
+              key={idx}
+              onClick={() => {
+                setSelectedLocation(s?.properties?.name)
+                setSuggestions([])
+              }
+              }
+              className="p-2 hover:bg-gray-100 cursor-pointer"
+            >
+              {s.properties.name}, {s.properties.city || ""} {s.properties.country || ""}
+            </li>
+          ))}
+        </ul>
+      )}
 
           <div className="flex items-center gap-3 border border-gray-300 rounded-lg p-3">
             <span className="text-black text-lg">🛑</span>
             <input
               type="text"
+              value = {dropValue}
               placeholder="Enter Drop Location"
-              
+              onChange={(e) => {
+                setDropValue(e.target.value)
+                fetchDropSuggestion(e.target.value)
+              }}
               className="w-full outline-none text-gray-700"
             />
           </div>
-
+            {dropSuggestions.length > 0 && (
+        <ul
+          className="border border-gray-300 rounded-lg p-2 max-h-48 overflow-y-auto bg-white"
+        >
+          {dropSuggestions.map((s, idx) => (
+            <li
+              key={idx}
+              onClick={() => {
+                setDropValue(s?.properties?.name)
+                setDropSuggestions([])
+              }
+              }
+              className="p-2 hover:bg-gray-100 cursor-pointer"
+            >
+              {s.properties.name}, {s.properties.city || ""} {s.properties.country || ""}
+            </li>
+          ))}
+        </ul>
+      )}
           <button
             
             className="mt-4 w-full bg-yellow-400 text-black font-bold py-3 rounded-lg hover:bg-yellow-500 transition"
@@ -101,7 +182,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      
       <section className="py-20 text-center">
         <h2 className="text-3xl font-bold mb-6">Our Services</h2>
         <p className="text-gray-600 max-w-xl mx-auto">
@@ -113,3 +193,13 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
+
+
+
+
+
+
+
+
+
