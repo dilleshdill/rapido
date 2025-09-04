@@ -6,7 +6,7 @@ import Home from './pages/Home';
 import "./App.css"
 import DriverRegister from './pages/DriverRegister';
 import ImageUpload from './components/ImageUpload';
-
+import VehicleSelection from './pages/VehicleSelection';
 
 const App = () => {
   return(
@@ -17,6 +17,7 @@ const App = () => {
         <Route exact path="/signup" element={<SignUpPage />} />
         <Route exact path="/upload" element={<ImageUpload />} />
         <Route exact path="/driver-register" element={<DriverRegister />} />
+        <Route exact path="/vehicle-selection" element={<VehicleSelection />} />
       </Routes>
     </BrowserRouter>
   )
