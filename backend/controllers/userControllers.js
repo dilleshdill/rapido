@@ -1,11 +1,12 @@
-const User = require("../models/userModel.js");
+import User from "../models/userModel.js";
+import generateUserToken from "../utils/user.util.js";
 
 async function addUser(req, res) {
   const { email,firstName,lastName } = req.body;
-  console.log(email,firstName,lastName);
   try {
     const user = await User.createUser(email,firstName,lastName);
-    res.json(user);
+    return generateUserToken(res, user);
+    // res.json(user);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -20,4 +21,4 @@ async function listUsers(req, res) {
   }
 }
 
-module.exports = { addUser, listUsers };
+export { addUser, listUsers };
