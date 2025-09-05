@@ -9,21 +9,21 @@ const Login = () => {
   const [error, setError] = useState("");
     const [latAndLong, setLatAndLong] = useState({ lat: 0, lon: 0 });
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLatAndLong({
-            lat: position.coords.latitude,
-            lon: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.error(error.message);
-        }
-      );
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(
+  //       (position) => {
+  //         setLatAndLong({
+  //           lat: position.coords.latitude,
+  //           lon: position.coords.longitude,
+  //         });
+  //       },
+  //       (error) => {
+  //         console.error(error.message);
+  //       }
+  //     );
+  //   }
+  // }, []);
 
   const validateForm = () => {
     if (!email) return "Email is required";

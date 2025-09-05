@@ -1,12 +1,11 @@
 import React, { useEffect,useState } from "react";
-import { SignOutButton, useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from "axios";
 
 
 
-const HomePage = () => {
+const Home = () => {
   const [selectedLocation, setSelectedLocation] = useState("hyderabad");
   const [dropValue, setDropValue] = useState("hyderabad");
   const [suggestions, setSuggestions] = useState([]);
@@ -15,38 +14,7 @@ const HomePage = () => {
   const [location2, setLocation2] = useState(null);
 
   const navigate = useNavigate();
-  const { user, isSignedIn } = useUser(); 
 
-  useEffect(() => {
-    if (isSignedIn && user) {
-      fetchData();
-    }
-  }, [user, isSignedIn]);
-
-  
-  const fetchData = async () => {
-    const email = user.emailAddresses[0].emailAddress;
-    const lastName = user.lastName;
-    const firstName = user.firstName;
-    try {
-      console.log(email, firstName, lastName);
-      const response = await axios.post("http://localhost:5000/add", {
-        email,
-        firstName,
-        lastName
-      });
-
-      if (response.status === 200){
-        const result = await response.json();
-        Cookies.set("userEmail", result.token, { expires: 7 });
-        console.log("User data added successfully");
-      } else {
-        console.error("Failed to add user data");
-      }
-    } catch(error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
 
   
   const fetchSuggestions = async (input) => {
@@ -142,11 +110,6 @@ const HomePage = () => {
   }
   return (
     <div className="min-w-screen min-h-screen bg-gray-100">
-      <button
-      onClick={() =>{getClear()}}
-       className="absolute top-4 right-4 bg-yellow-400 text-black font-bold py-2 px-4 rounded-lg hover:bg-yellow-500 transition">
-        <SignOutButton />
-      </button>
       
       <header className="flex justify-between items-center p-6 bg-white shadow-md">
         <div className="text-yellow-400 font-bold text-2xl">rapido</div>
@@ -265,7 +228,7 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default Home;
 
 
 
