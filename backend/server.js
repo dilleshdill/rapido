@@ -4,6 +4,7 @@ import userRoutes from "./routes/userRoutes.js";
 import uploadRoutes from "./routes/uploadRoute.js";
 import driverRoutes from "./routes/driverRoute.js";
 import checkCordinates from "./routes/checkCordinatesRoute.js";
+import ridesRoute from "./routes/ridesRouter.js";
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use("/", userRoutes);
 app.use("/driver",driverRoutes);
 app.use("/check",checkCordinates)
 app.use("/upload", uploadRoutes);
+app.use("/rides",ridesRoute)
 
 app.listen(5000, () =>
   console.log("🚀 Server running on http://localhost:5000")
