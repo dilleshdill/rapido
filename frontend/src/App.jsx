@@ -8,6 +8,7 @@ import DriverRegister from './pages/DriverRegister';
 import ImageUpload from './components/ImageUpload';
 import VehicleSelection from './pages/VehicleSelection';
 import OSMMap from './components/OSMMap';
+import DriverLogin from './pages/DriverLogin';
 
 const App = () => {
   return(
@@ -20,6 +21,7 @@ const App = () => {
         <Route exact path="/driver-register" element={<DriverRegister />} />
         <Route exact path="/vehicle-selection" element={<VehicleSelection />} />
         <Route exact path="/map" element={<OSMMap />} />
+        <Route exact path="/driver-login" element={<DriverLogin />} />
       </Routes>
     </BrowserRouter>
   )

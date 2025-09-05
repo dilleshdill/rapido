@@ -1,7 +1,7 @@
 import React, { useEffect,useState } from "react";
 import { SignOutButton, useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
-
+import Cookies from "js-cookie";
 import axios from "axios";
 
 
@@ -37,6 +37,8 @@ const HomePage = () => {
       });
 
       if (response.status === 200){
+        const result = await response.json();
+        Cookies.set("userEmail", result.token, { expires: 7 });
         console.log("User data added successfully");
       } else {
         console.error("Failed to add user data");
@@ -134,10 +136,15 @@ const HomePage = () => {
     }
   }
 
-
+  const getClear = () => {
+    localStorage.clear();
+    navigate("/");
+  }
   return (
     <div className="min-w-screen min-h-screen bg-gray-100">
-      <button className="absolute top-4 right-4 bg-yellow-400 text-black font-bold py-2 px-4 rounded-lg hover:bg-yellow-500 transition">
+      <button
+      onClick={() =>{getClear()}}
+       className="absolute top-4 right-4 bg-yellow-400 text-black font-bold py-2 px-4 rounded-lg hover:bg-yellow-500 transition">
         <SignOutButton />
       </button>
       
