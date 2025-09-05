@@ -1,9 +1,10 @@
 import pool from "../config/db.js";
 
-async function createUser(email, firstName, lastName,password) {
+async function createUser(email, firstName, lastName,hashedpassword) {
+  console.log(email, firstName, lastName,hashedpassword)
   const result = await pool.query(
     "INSERT INTO users (email,password,firstname,lastname) VALUES ($1, $2, $3, $4) RETURNING *",
-    [email,password,firstName,lastName]
+    [email,hashedpassword,firstName,lastName]
   );
   return result.rows[0];
 }
