@@ -5,9 +5,9 @@ async function addUser(req, res) {
   const { email,firstName,lastName } = req.body;
   try {
     const user = await User.createUser(email,firstName,lastName);
-    // return generateUserToken(res, user);
-
-    res.status(200).json(user);
+    
+    return generateUserToken(user)
+    // res.status(200).json(user);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
