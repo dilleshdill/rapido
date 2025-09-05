@@ -34,8 +34,8 @@ const createRide = async (req, res) => {
             LIMIT 1`
             ,[pickupLat,pickupLon,radius]
     )
-    console.log(sortedDist)
-    
+    console.log(sortedDist.rows)
+
 };
 
 export default createRide ;
