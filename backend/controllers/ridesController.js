@@ -19,28 +19,26 @@ const createRide = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 
-    // const radius = 5
-    // const query = `
-    //     SELECT *
-    //     FROM (
-    //         SELECT driver_id, lat, lng,
-    //             (6371 * acos(
-    //                 cos(radians($1)) * cos(radians(lat)) *
-    //                 cos(radians(lng) - radians($2)) +
-    //                 sin(radians($1)) * sin(radians(lat))
-    //             )) AS distance_km
-    //         FROM drivers_rides
-    //         WHERE is_available = TRUE
-    //     ) AS distances
-    //     WHERE distance_km <= $3
-    //     ORDER BY distance_km
-    //     LIMIT 1;
-    //     `;
+    const radius = 5
+    const query = `
+        SELECT *
+        FROM (
+            SELECT driver_id, lat, lng,
+                (6371 * acos(
+                    cos(radians($1)) * cos(radians(lat)) *
+                    cos(radians(lng) - radians($2)) +
+                    sin(radians($1)) * sin(radians(lat))
+                )) AS distance_km
+            FROM drivers_rides
+            WHERE is_available = TRUE
+        ) AS distances
+        WHERE distance_km <= $3
+        ORDER BY distance_km
+        LIMIT 1;
+        `;
 
-    //     const sortedDist = await pool.query(query, [pickupLat, pickupLon, radius]);
+        const sortedDist = await pool.query(query, [pickupLat, pickupLon, radius]);
         
-
-
 };
 
 export default createRide ;

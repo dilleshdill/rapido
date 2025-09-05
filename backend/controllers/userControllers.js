@@ -22,7 +22,7 @@ const getUserRides = async(req,res) =>{
     `SELECT * FROM rides WHERE $1 = user_id`,[id]
   ) 
   console.log("data of rows",data.rows)
-  res.status(200).json({data})
+  res.status(200).json(data.rows)
 }
 
 async function listUsers(req, res) {
