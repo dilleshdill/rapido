@@ -52,7 +52,7 @@ const VehicleSelection = () => {
         headers: {Authorization: `Bearer ${Cookies.get("userToken")}`,}
       });
       if (response.status === 200) {
-        const result = await response.json();
+        const result = await response.data;
         console.log("Booking successful:", result);
         alert("Booking successful!");
         navigate('/booking-confirmation', { state: { ride: result } });
