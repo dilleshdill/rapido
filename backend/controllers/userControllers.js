@@ -1,3 +1,4 @@
+import pool from "../config/db.js";
 import User from "../models/userModel.js";
 import generateUserToken from "../utils/user.util.js";
 import bcrypt from 'bcrypt'
@@ -14,6 +15,16 @@ async function addUser(req, res) {
   }
 }
 
+const getUserRides = async(req,res) =>{
+  const {id,email} = req.user
+  console.log(id,email)
+  const data = await pool.query(
+    `SELECT * FROM rides WHERE $1 = user_id`,[id]
+  ) 
+  console.log("data of rows",data.rows)
+  res.status(200).json({data})
+}
+
 async function listUsers(req, res) {
   try {
     const users = await User.getUsers();
@@ -23,4 +34,4 @@ async function listUsers(req, res) {
   }
 }
 
-export { addUser, listUsers };
+export { addUser, listUsers,getUserRides };

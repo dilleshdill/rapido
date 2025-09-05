@@ -6,7 +6,7 @@ const authenticate = (req,res,next) =>{
         return res.status(401).json({ message: 'Unauthorized access' });
     }
     try {
-        const decoded = jwt.verify(token,process.env.SECRET_KEY);
+        const decoded = jwt.verify(token,"rapido");
         if (decoded){
             req.user = decoded; 
             next(); 
