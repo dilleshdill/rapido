@@ -3,7 +3,6 @@ import pool from "../config/db.js";
 const createRide = async (req, res) => {
     
     const { vehicle,pickup,drop,distance,price,pickupLat,pickupLon,dropLat,dropLon } = req.body;
-    console.log(req.body)
     try {
             const result = await pool.query(
                 `INSERT INTO rides (user_id, pickup_lat, pickup_lon, drop_lat, drop_lon, amount,distance,city,status,driver_id,name,vehicle)
@@ -18,6 +17,23 @@ const createRide = async (req, res) => {
 
         res.status(500).json({ error: err.message });
     }
+
+
+    const radius = 3
+    const sortedDist = await pool.query(
+            `SELECT driver_id, lat, lng,
+            (6371 * acos(
+                cos(radians($1)) * cos(radians(lat)) *
+                cos(radians(lng) - radians($2)) +                    
+                sin(radians($1)) * sin(radians(lat))
+            )) AS distance_km
+            FROM drivers_rides
+            WHERE is_available = TRUE
+            HAVING distance_km <= $3                
+            ORDER BY distance_km
+            LIMIT 1`
+            ,[pickup_lat,pickup_lon,radius]
+    )
 };
 
 export default createRide ;

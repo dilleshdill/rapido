@@ -1,10 +1,12 @@
 import User from "../models/userModel.js";
 import generateUserToken from "../utils/user.util.js";
+import bcrypt from 'bcrypt'
 
 async function addUser(req, res) {
-  const { email,firstName,lastName } = req.body;
+  const { email,firstName,lastName,password } = req.body;
   try {
-    const user = await User.createUser(email,firstName,lastName);
+    const hashedpassword = await bcrypt.hash(password,10)
+    const user = await User.createUser(email,firstName,lastName,hashedpassword);
     
     return generateUserToken(user)
     // res.status(200).json(user);
