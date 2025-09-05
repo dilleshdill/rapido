@@ -108,7 +108,7 @@ const HomePage = () => {
       console.log("Location 1:", loc1);
       console.log("location 2",loc2)
       try {
-        const res = await axios.post("http://localhost:5000/locations", {
+        const res = await axios.post("http://localhost:5000/check/locations", {
           pickup: selectedLocation,
           drop: dropValue,
           loc1,
