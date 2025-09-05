@@ -2,7 +2,7 @@ import pool from "../config/db.js";
 
 async function createUser(email, firstName, lastName,password) {
   const result = await pool.query(
-    "INSERT INTO users (email,password,firstName,lastName) VALUES ($1, $2, $3, $4) RETURNING *",
+    "INSERT INTO users (email,password,firstname,lastname) VALUES ($1, $2, $3, $4) RETURNING *",
     [email,password,firstName,lastName]
   );
   return result.rows[0];
