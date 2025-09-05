@@ -28,7 +28,7 @@ const VehicleSelection = () => {
     if (dist.pickup && dist.drop) {
       setPickup(dist.pickup);
       setDrop(dist.drop);
-      setDistance(dist.distance);
+      setDistance(dist.parseInt(distance.toFixed(2)));
       setIsShow(true);
       console.log("Distance in vehicle selection:", dist.distance);
     }
@@ -48,10 +48,8 @@ const VehicleSelection = () => {
       dropLon: localStorage.getItem("drop-lon"),
     };
     try {
-      const response = await fetch("http://localhost:5000/rides", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+      const response = await axios.post("http://localhost:5000/rides",data,{
+        headers: {Authorization: `Bearer ${Cookies.get("userToken")}`,}
       });
       if (response.status === 200) {
         const result = await response.json();
