@@ -1,18 +1,20 @@
 import React, { useEffect,useState } from "react";
 import { SignOutButton, useUser } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
 
 
 
 const HomePage = () => {
-  const [selectedLocation, setSelectedLocation] = useState("");
-  const [dropValue, setDropValue] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("hyderabad");
+  const [dropValue, setDropValue] = useState("hyderabad");
   const [suggestions, setSuggestions] = useState([]);
   const [dropSuggestions, setDropSuggestions] = useState([]);
   const [location1, setLocation1] = useState(null);
   const [location2, setLocation2] = useState(null);
-  
+
+  const navigate = useNavigate();
   const { user, isSignedIn } = useUser(); 
 
   useEffect(() => {
@@ -105,8 +107,6 @@ const HomePage = () => {
     if (loc1 && loc2) {
       setLocation1(loc1);
       setLocation2(loc2);
-      console.log("Location 1:", loc1);
-      console.log("location 2",loc2)
       try {
         const res = await axios.post("http://localhost:5000/check/locations", {
           pickup: selectedLocation,
@@ -115,7 +115,13 @@ const HomePage = () => {
           loc2
         }); 
         if (res.status === 200){
-          alert("Locations saved successfully");
+          localStorage.setItem("pickup-lat", loc1.lat);
+          localStorage.setItem("pickup-lon", loc1.lon);
+          localStorage.setItem("drop-lat", loc2.lat);
+          localStorage.setItem("drop-lon", loc2.lon);
+          localStorage.setItem("pickup-address", selectedLocation);
+          localStorage.setItem("drop-address", dropValue);
+          navigate("/vehicle-selection");
         } else {
           alert("Failed to save locations");
         }
@@ -189,7 +195,10 @@ const HomePage = () => {
               }
               className="p-2 hover:bg-gray-100 cursor-pointer"
             >
-              {s.properties.name}, {s.properties.city || ""} {s.properties.country || ""}
+              <div>
+                  <p className="text-lg font-semibold pb-2">{s.properties.city}</p>
+                  {s.properties.name}, {s.properties.city || ""} {s.properties.country || ""}
+                </div>
             </li>
           ))}
         </ul>
@@ -222,7 +231,10 @@ const HomePage = () => {
               }
               className="p-2 hover:bg-gray-100 cursor-pointer"
             >
-              {s.properties.name}, {s.properties.city || ""} {s.properties.country || ""}
+              <div>
+                  <p className="text-lg font-semibold pb-2">{s.properties.city}</p>
+                  {s.properties.name}, {s.properties.city || ""} {s.properties.country || ""}
+                </div>
             </li>
           ))}
         </ul>

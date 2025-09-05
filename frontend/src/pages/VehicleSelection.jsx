@@ -3,6 +3,7 @@ import bike1 from "../assets/bike1.jpg";
 import auto from "../assets/auto.jpg";
 import cab from "../assets/cab.jpg";
 import PickPoints from "../components/PickPoints";
+import { useNavigate } from "react-router-dom";
 
 
 const vehicles = [
@@ -12,10 +13,14 @@ const vehicles = [
 ];
 
 const VehicleSelection = () => {
+
+
   const [selected, setSelected] = useState("");
-  const [pickup, setPickup] = useState(null);
+  const [pickup, setPickup] = useState("");
   const [drop, setDrop] = useState(null);
   const [distance, setDistance] = useState(null);
+  const [isShow, setIsShow] = useState(false);
+  const navigate = useNavigate();
 
   const getDistance = (dist) => {
     console.log("Pickup:",dist.pickup);
@@ -24,17 +29,53 @@ const VehicleSelection = () => {
       setPickup(dist.pickup);
       setDrop(dist.drop);
       setDistance(dist.distance);
+      setIsShow(true);
       console.log("Distance in vehicle selection:", dist.distance);
     }
     // You can add logic here to calculate distance or fetch route details
   }
 
-  
+  const setIntoBackend = async () => {
+    const data = {
+      vehicle: selected,
+      pickup,
+      drop,
+      distance,
+      price: parseInt(distance.toFixed(2) * vehicles.find(v => v.id === selected).cost) + 5,
+      pickupLat: localStorage.getItem("pickup-lat"),
+      pickupLon: localStorage.getItem("pickup-lon"),
+      dropLat: localStorage.getItem("drop-lat"),
+      dropLon: localStorage.getItem("drop-lon"),
+    };
+    try {
+      const response = await fetch("http://localhost:5000/rides", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (response.status === 200) {
+        const result = await response.json();
+        console.log("Booking successful:", result);
+        alert("Booking successful!");
+        navigate("/,");
+        // Optionally, redirect or clear selections here
+      }
+      else {
+        console.error("Booking failed:", response.statusText);
+        alert("Booking failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during booking:", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
+
+
   return (
-    <div className="flex flex-col h-full w-screen  bg-gray-100 p-0 m-0">
+    <div className="flex flex-col w-screen top-0 bg-gray-100 p-0 m-0">
       <PickPoints getRide={getDistance}/>
       
-      <div className="bg-white mt-5 p-5 rounded-2xl shadow-lg md:w-full w-[350px]">
+      {isShow && <div className="bg-white mt-5 p-5 rounded-2xl shadow-lg md:w-full w-[350px]">
         <h2 className="text-xl font-semibold mb-6">Select Service</h2>
         <div className="grid gap-4">
           {vehicles.map((v) => (
@@ -74,11 +115,12 @@ const VehicleSelection = () => {
           <button
           className="mt-6 w-[90vw] !bg-[#FFCA20] text-black outline-none py-2 rounded-lg hover:!bg-yellow-500 transition"
           disabled={!selected}
+          onClick={() => setIntoBackend()}
         >
           Continue Booking
         </button>
         </div>
-      </div>
+      </div>}
     </div>
   );
 };

@@ -3,8 +3,9 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 
-const CostEstimation = ({getCost,address1,address2}) => {
-console.log("Addresses in cost estimation:", address1, address2);
+const CostEstimation = ({getCost}) => {
+  const [address1, setAddress1] = useState(localStorage.getItem("pickup-address") || "");
+  const [address2, setAddress2] = useState(localStorage.getItem("drop-address") || "");
   const [location1, setLocation1] = useState(null);
   const [location2, setLocation2] = useState(null);
   const [route, setRoute] = useState([]);
@@ -40,6 +41,7 @@ console.log("Addresses in cost estimation:", address1, address2);
       const routeData = res.data.routes[0];
       const coords = routeData.geometry.coordinates.map((c) => [c[1], c[0]]);
       setRoute(coords);
+      console.log("Route data:", routeData);
       setDistance(routeData.distance / 1000); // km
       setDuration(routeData.duration / 60); // minutes
       getCost(routeData.distance/1000); 

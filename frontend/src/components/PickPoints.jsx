@@ -6,8 +6,53 @@
 
 
   const PickPoints = ({getRide}) => {
-    const [selectedLocation, setSelectedLocation] = useState("Boppadam");
-    const [dropValue, setDropValue] = useState("Ranasthalam");
+    const location1Lat = localStorage.getItem("pickup-lat");
+    const location1Lon = localStorage.getItem("pickup-lon");
+    const location2Lat = localStorage.getItem("drop-lat");
+    const location2Lon = localStorage.getItem("drop-lon");
+    console.log("Locations from localStorage:", location1Lat, location2Lon, location2Lat, location2Lon);
+    const [selectedLocation, setSelectedLocation] = useState("");
+    const [dropValue, setDropValue] = useState("");
+
+    useEffect(() => {
+      if (location1Lat && location1Lon && location2Lat && location2Lon) {
+        
+        fetchAddresss1(location1Lat, location1Lon);
+        fetchAddresss2(location2Lat, location2Lon);
+      } 
+    }, [location1Lat,location1Lon,location2Lat,location2Lon]);
+
+    const fetchAddresss1 = async (a,b) => {
+      console.log(a,b)
+      try {
+        const response = await axios.get("https://nominatim.openstreetmap.org/reverse", {
+          params: { lat:a, lon:b, format: "json" },
+        });
+        console.log("Response from nominatim:", response.data);
+        if (response.data && response.data.display_name) {
+          setSelectedLocation(response.data.display_name);
+        }
+      } catch (err) {
+        console.error("Geocode error:", err);
+      }
+    };
+
+    const fetchAddresss2 = async (a,b) => {
+      try {
+        const response = await axios.get("https://nominatim.openstreetmap.org/reverse", {
+          params: { lat:a, lon:b, format: "json" },
+        });
+        if (response.data && response.data.display_name) {
+          setDropValue(response.data.display_name);
+        }
+      } catch (err) {
+        console.error("Geocode error:", err);
+      }
+    };
+
+    
+    
+    
     const [suggestions, setSuggestions] = useState([]);
     const [dropSuggestions, setDropSuggestions] = useState([]);
     const [showEstimation, setShowEstimation] = useState(false);
@@ -54,7 +99,7 @@
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const { latitude, longitude } = position.coords;
-            
+
             setLatAndLong(latitude, longitude);
           },
           (error) => {
@@ -120,7 +165,10 @@
                 }
                 className="p-2 hover:bg-gray-100 cursor-pointer"
               >
-                {s.properties.name}, {s.properties.city || ""} {s.properties.country || ""}
+                <div>
+                  <p className="text-lg font-semibold pb-2">{s.properties.city}</p>
+                  {s.properties.name}, {s.properties.city || ""} {s.properties.country || ""}
+                </div>
               </li>
             ))}
           </ul>
@@ -153,7 +201,10 @@
                 }
                 className="p-2 hover:bg-gray-100 cursor-pointer"
               >
-                {s.properties.name}, {s.properties.city || ""} {s.properties.country || ""}
+                <div>
+                  <p className="text-lg font-semibold pb-2">{s.properties.city}</p>
+                  {s.properties.name}, {s.properties.city || ""} {s.properties.country || ""}
+                </div>
               </li>
             ))}
           </ul>
@@ -173,8 +224,6 @@
               {showEstimation && (
                 <CostEstimation
                   getCost={getEstimation}
-                  address1={selectedLocation}
-                  address2={dropValue}
                 />
               )}
             <button
