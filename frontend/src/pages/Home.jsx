@@ -10,6 +10,8 @@ const HomePage = () => {
   const [dropValue, setDropValue] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [dropSuggestions, setDropSuggestions] = useState([]);
+  const [location1, setLocation1] = useState(null);
+  const [location2, setLocation2] = useState(null);
   
   const { user, isSignedIn } = useUser(); 
 
@@ -78,6 +80,54 @@ const HomePage = () => {
       setDropSuggestions([]);
     }
   };
+
+  const getCoordinates = async (address) => {
+    try {
+      const response = await axios.get("https://nominatim.openstreetmap.org/search", {
+        params: { q: address, format: "json", limit: 1 },
+      });
+      if (response.data.length > 0) {
+        return {
+          lat: parseFloat(response.data[0].lat),
+          lon: parseFloat(response.data[0].lon),
+        };
+      }
+      return null;
+    } catch (err) {
+      console.error("Geocode error:", err);
+      return null;
+    }
+  };
+
+  const getLocationFromUser = async () => {
+    const loc1 = await getCoordinates(selectedLocation);    
+    const loc2 = await getCoordinates(dropValue);
+    if (loc1 && loc2) {
+      setLocation1(loc1);
+      setLocation2(loc2);
+      console.log("Location 1:", loc1);
+      console.log("location 2",loc2)
+      try {
+        const res = await axios.post("http://localhost:5000/locations", {
+          pickup: selectedLocation,
+          drop: dropValue,
+          loc1,
+          loc2
+        }); 
+        if (res.status === 200){
+          alert("Locations saved successfully");
+        } else {
+          alert("Failed to save locations");
+        }
+      } catch (error) {
+        console.error("Error saving locations:", error);
+      }
+
+    } else {
+      alert("Could not find one or both locations. Please enter valid addresses.");
+    }
+  }
+
 
   return (
     <div className="min-w-screen min-h-screen bg-gray-100">
@@ -178,7 +228,7 @@ const HomePage = () => {
         </ul>
       )}
           <button
-            
+            onClick={()=>getLocationFromUser()}
             className="mt-4 w-full bg-yellow-400 text-black font-bold py-3 rounded-lg hover:bg-yellow-500 transition"
           >
             Book Ride
