@@ -1,4 +1,4 @@
-const { Pool } = require("pg");
+import Pool from "pg-pool";
 
 const pool = new Pool({
   connectionString:
@@ -6,4 +6,4 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-module.exports = pool;
+export default pool;
