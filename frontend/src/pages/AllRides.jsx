@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 const AllRides = () => {
   const [totalRides, setTotalRides] = useState([]);
-
+const navigate = useNavigate()
   useEffect(() => {
     fetchRides();
   }, []);
@@ -27,51 +28,88 @@ const AllRides = () => {
   };
 
   const statusColors = {
-    pending: "text-yellow-600 bg-yellow-100 px-2 py-1 rounded-full",
-    confirmed: "text-green-700 bg-green-100 px-2 py-1 rounded-full",
-    completed: "text-blue-700 bg-blue-100 px-2 py-1 rounded-full",
-    cancelled: "text-red-700 bg-red-100 px-2 py-1 rounded-full",
+    pending: "text-yellow-600  px-3 py-1 ",
+    confirmed: "text-green-700  px-3 py-1 ",
+    completed: "text-blue-700  px-3 py-1",
+    cancelled: "text-red-700  px-3 py-1 ",
+  };
+
+  const cancelRaid = async (id) => {
+    try{
+        const res = await axios.put("http://localhost:5000/cancel-ride",{id},{
+            headers: {
+                Authorization: `Bearer ${Cookies.get("userToken")}`,
+                },
+        })
+        if(res.status===200){
+            alert("Ride Cancelled Successfully")
+        }  
+    }catch(err){
+        console.error("Error cancelling ride:", err);
+
+    }
   };
 
   return (
-    <div className="p-6 min-h-screen bg-gray-100">
-      <h2 className="text-2xl font-bold mb-6">All Rides</h2>
+    <div className="p-6 min-h-screen w-screen bg-gray-100">
+      <h2 className="text-2xl font-bold mb-6">My Rides</h2>
 
       {totalRides.length === 0 ? (
         <p>No rides found.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white rounded-xl shadow-md">
-            <thead className="bg-gray-200">
-              <tr>
-                <th className="py-2 px-4 text-left">Vehicle</th>
-                <th className="py-2 px-4 text-left">Pickup</th>
-                <th className="py-2 px-4 text-left">Drop</th>
-                <th className="py-2 px-4 text-left">Distance (km)</th>
-                <th className="py-2 px-4 text-left">Price (₹)</th>
-                <th className="py-2 px-4 text-left">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {totalRides.map((ride, index) => (
-                <tr
-                  key={index}
-                  className="border-b last:border-none hover:bg-gray-50"
-                >
-                  <td className="py-2 px-4">{ride.vehicle}</td>
-                  <td className="py-2 px-4">{ride.pickup}</td>
-                  <td className="py-2 px-4">{ride.drop}</td>
-                  <td className="py-2 px-4">{ride.distance}</td>
-                  <td className="py-2 px-4">{ride.amount}</td>
-                  <td className="py-2 px-4">
-                    <span className={statusColors[ride.status.toLowerCase()]}>
-                      {ride.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {totalRides.map((ride, index) => (
+            <div
+              key={index}
+              className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition"
+            >
+              <h3 className="text-lg font-semibold mb-2">
+                <span className="font-semibold">Vechile:</span> {ride.vehicle}
+              </h3>
+              <p className="text-gray-700 mb-2">
+                <span className="font-semibold">Pickup:</span> {ride.city}
+              </p>
+              <p className="text-gray-700 mb-2">
+                <span className="font-semibold">Driver Id:</span> {ride.driver_id}
+              </p>
+              <p className="text-gray-700 mb-2">
+                <span className="font-semibold">Booking Id:</span> {ride.id}
+              </p>
+              <p className="text-gray-700 mb-2">
+                <span className="font-semibold">Distance:</span> {ride.distance} km
+              </p>
+              <p className="text-gray-700 mb-2">
+                <span className="font-semibold">Price:</span> ₹{ride.amount}
+              </p>
+              <p>
+                <strong>Status:{" "}</strong>
+                <span className={`font-bold ${statusColors[ride.status.toLowerCase()]}`}>
+                  {ride.status}
+                </span>
+              </p>
+              <p className="text-gray-700 mb-1">
+                <span className="font-semibold">Created At:</span> {ride.created_at?.slice(0, 10)}
+                </p>
+                <p className="text-gray-700 mb-1">
+                <span className="font-semibold">CreatedTime:</span> {ride.created_at?.slice(11, 16)}
+                </p>
+                <div className="flex  mt-4 gap-2">
+                    <button
+                    onClick={()=>navigate(`/${ride.id}`)}
+                    className="mt-4 w-full !bg-yellow-400 text-black font-bold py-2 rounded-lg hover:bg-yellow-500 transition">
+                    View Details
+                    </button>
+                    {
+                        (ride.status==="pending" || ride.status === "onGoing") &&
+                        <button
+                        onClick={()=>cancelRaid(ride.id)}
+                        className="mt-4 w-full !bg-red-500 text-white font-bold py-2 rounded-lg hover:bg-yellow-500 transition">
+                        Cancel
+                        </button>
+                    }
+                </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
