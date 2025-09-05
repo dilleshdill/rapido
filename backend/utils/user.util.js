@@ -1,14 +1,14 @@
 import jwt from "jsonwebtoken";
 
 const generateUserToken = (res, user) => {
-  console.log(user)
+  console.log("user",user)
   if (user) {
     const payload = {
       id: user.id,
       email: user.email,
     };
 
-    const token = jwt.sign(payload, process.env.SECRET_KEY, {
+    const token = jwt.sign(payload, "rapido", {
       expiresIn: "30d",
     });
 
