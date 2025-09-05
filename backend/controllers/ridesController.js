@@ -32,8 +32,10 @@ const createRide = async (req, res) => {
             HAVING distance_km <= $3                
             ORDER BY distance_km
             LIMIT 1`
-            ,[pickup_lat,pickup_lon,radius]
+            ,[pickupLat,pickupLon,radius]
     )
+    console.log(sortedDist)
+    
 };
 
 export default createRide ;

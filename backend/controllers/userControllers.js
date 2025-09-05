@@ -7,9 +7,7 @@ async function addUser(req, res) {
   try {
     const hashedpassword = await bcrypt.hash(password,10)
     const user = await User.createUser(email,firstName,lastName,hashedpassword);
-    
     return generateUserToken(user)
-    // res.status(200).json(user);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
