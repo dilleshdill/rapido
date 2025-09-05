@@ -42,17 +42,17 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5000/driver/login", {
+      const token = Cookies.get("userToken");
+      console.log("Token from cookies:", token);
+      const res = await axios.post("http://localhost:5000/user/login", {
         email,
         password,
-        latitude: latAndLong.lat,
-        longitude: latAndLong.lon
+        token,
       });
 
       if (res.status === 200) {
-        Cookies.set("authToken", res.data.token, { expires: 7 });
         alert("Login Successful ✅");
-        console.log("User:", res.data.user);
+        console.log("User:", res.data);
       }
     } catch (err) {
       setError(err.response?.data?.message || "Login Failed ❌");

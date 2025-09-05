@@ -57,7 +57,7 @@ const VehicleSelection = () => {
         const result = await response.json();
         console.log("Booking successful:", result);
         alert("Booking successful!");
-        navigate("/,");
+        navigate('/booking-confirmation', { state: { ride: result } });
         // Optionally, redirect or clear selections here
       }
       else {
