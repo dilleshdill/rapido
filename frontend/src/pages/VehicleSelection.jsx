@@ -4,8 +4,8 @@ import auto from "../assets/auto.jpg";
 import cab from "../assets/cab.jpg";
 import PickPoints from "../components/PickPoints";
 import { useNavigate } from "react-router-dom";
-
-
+import axios from "axios";
+import Cookies from "js-cookie";
 const vehicles = [
   { id: "bike", label: "Bike", image: bike1,cost:5 },
   { id: "auto", label: "Auto", image: auto,cost:10 },
