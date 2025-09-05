@@ -28,7 +28,7 @@ const VehicleSelection = () => {
     if (dist.pickup && dist.drop) {
       setPickup(dist.pickup);
       setDrop(dist.drop);
-      setDistance(dist.parseInt(distance.toFixed(2)));
+      setDistance(dist.distance);
       setIsShow(true);
       console.log("Distance in vehicle selection:", dist.distance);
     }
