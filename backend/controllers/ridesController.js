@@ -39,7 +39,6 @@ const createRide = async (req, res) => {
 
         const sortedDist = await pool.query(query, [pickupLat, pickupLon, radius]);
         
-        `UPDATE `
 
 
 };
