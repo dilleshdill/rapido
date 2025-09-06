@@ -32,10 +32,8 @@ const driverSocket = (io) => {
         );
 
         console.log("Ride confirmed for driver", socket.driverId,rides.rows[0].user_id);
-        io.to(rides.rows[0].user_id.toString()).emit("rideConfirmed", {
-          rides
-        });
 
+        io.to(rides.rows[0].user_id.toString()).emit("rideConfirmed", rides);
         const driverRow = await pool.query(
             `SELECT * FROM drivers_rides WHERE driver_id = $1`, [socket.driverId]
             );
