@@ -26,10 +26,10 @@ const driverSocket = (io) => {
         );
 
         
-        await pool.query(
-          `UPDATE drivers_rides SET is_available = FALSE WHERE driver_id = $1`,
-          [socket.driverId]
-        );
+        // await pool.query(
+        //   `UPDATE drivers_rides SET is_available = FALSE WHERE driver_id = $1`,
+        //   [socket.driverId]
+        // );
 
         console.log("Ride confirmed for driver", socket.driverId,rides.rows[0].user_id);
 
