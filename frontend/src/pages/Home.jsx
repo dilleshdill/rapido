@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import {io} from "socket.io-client";
 
-const socket = io("http://localhost:5000")
+
 
 const Home = () => {
   const [selectedLocation, setSelectedLocation] = useState("hyderabad");
@@ -16,7 +16,10 @@ const Home = () => {
 
   const navigate = useNavigate();
 
+
   useEffect(()=>{
+    const socket = io("http://localhost:5000")
+    
     socket.emit("userId",202);
     return ()=>{
       socket.off("userId");
