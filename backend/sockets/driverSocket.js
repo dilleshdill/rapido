@@ -33,67 +33,48 @@ const driverSocket = (io) => {
 
         console.log("Ride confirmed for driver", socket.driverId);
         io.to(rides.rows[0].user_id.toString()).emit("rideConfirmed", {
-          rideId,
-          driverId: socket.driverId,
+          rides
         });
 
         const driverRow = await pool.query(
-            `SELECT * FROM drivers_rides WHERE driver_id = $1`,[socket.driverId]
-        )
+            `SELECT * FROM drivers_rides WHERE driver_id = $1`, [socket.driverId]
+            );
 
-        let driver = driverRow.rows[0]
+            let driver = driverRow.rows[0];
+            console.log("in driverSocket.js", driver);
 
-        const getDriverDistance = (dlat,dlon,ulat,ulon) => {
-            const step = 0.0003
+            const getDriverDistance = (dlat, dlon, ulat, ulon) => {
+            const step = 0.0003;
 
-            if (dlat < ulat){
-                dlat += step
-            }
-            else{
-                dlat -= step
-            }
+            if (dlat < ulat) dlat += step;
+            else dlat -= step;
 
-            if(dlon < ulon){
-                dlon += step
-            } 
-            else{
-                dlon -= step
-            }
+            if (dlon < ulon) dlon += step;
+            else dlon -= step;
 
-            return {dlat,dlon}
-        }
+            return { lat: dlat, lng: dlon }; 
+            };
 
-        function getDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371e3; // meters
-            const φ1 = lat1 * Math.PI/180;
-            const φ2 = lat2 * Math.PI/180;
-            const Δφ = (lat2-lat1) * Math.PI/180;
-            const Δλ = (lon2-lon1) * Math.PI/180;
+            const interval = setInterval(() => {
+            driver = getDriverDistance(
+                driver.lat,
+                driver.lng,
+                rides.rows[0].pickup_lat,
+                rides.rows[0].pickup_lon 
+            );
 
-            const a = Math.sin(Δφ/2)**2 +
-                        Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            console.log(
+                "in driversocketjs",
+                driver.lat,
+                driver.lng,
+                rides.rows[0].pickup_lat,
+                rides.rows[0].pickup_lon
+            );
 
-            return R * c; 
-        }
+            console.log("driver in driverSocket", driver);
 
-        
-        const interval = setInterval(() =>{
-            driver = getDriverDistance(driver.lat,driver.lng,rides.rows[0].pickup_lat,rides.rows[0].pick_lon)
-            const distance = getDistance(driver.lat, driver.lng, rides.rows[0].pickup_lat,rides.rows[0].pick_lon);
-            console.log("in driversocketjs",driver.lat, driver.lng, rides.rows[0].pickup_lat,rides.rows[0].pick_lon)
-            socket.emit("driverLoction",{driver,distance})
-
-            if (distance < 100) {
-                socket.emit("DriverArrived",{message:"arrived Successfully"})
-                clearInterval(interval)
-            }
-
-        },2000)
-
-
-        
-
+            socket.emit("driverLocation", driver); 
+            }, 2000);
 
 
       } catch (err) {
@@ -101,7 +82,7 @@ const driverSocket = (io) => {
       }
     });
 
-    // Driver declines ride
+    
     socket.on("rideDeclined", async (rideId) => {
       console.log("Ride declined by driver", socket.driverId);
       try {
