@@ -100,7 +100,7 @@ const navigate = useNavigate()
                     View Details
                     </button>
                     {
-                        (ride.status==="pending" || ride.status === "onGoing") &&
+                        (ride.status==="pending" || ride.status === "ongoing") &&
                         <button
                         onClick={()=>cancelRaid(ride.id)}
                         className="mt-4 w-full !bg-red-500 text-white font-bold py-2 rounded-lg hover:bg-yellow-500 transition">
