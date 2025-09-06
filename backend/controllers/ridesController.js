@@ -76,12 +76,20 @@ const createRide = async (req, res) => {
 };
 
 const getRides = async(req,res) => {
-    const {id} = req.params
+    const  rideId  = req.query.rideId;
+    console.log("Ride ID:", rideId);
 
     const data = await pool.query(
-        `SELELCT * FROM rides WHERE id = $1`,[id]
-    )
-    res.status(200).json(data)
-}
+    `SELECT * FROM rides WHERE id = $1`,
+    [Number(rideId)]
+    );
 
-export default {createRide,getRides};
+    if (data.rows.length === 0) {
+    return res.status(404).json({ message: "Ride not found" });
+    }
+
+    console.log("Ride Data:", data.rows[0]);
+    res.status(200).json(data.rows[0]);
+
+}
+export {createRide,getRides};
