@@ -45,8 +45,8 @@ const OSMMap = () => {
   useEffect(()=>{
     socket.on("driverLocation",locationDetails =>{
       setLatAndLong({
-      lat:locationDetails.dlat,
-      lon:locationDetails.dlon,
+      lat:locationDetails.lat,
+      lon:locationDetails.lng,
     });
     })
     showLocations(latAndLong.lat,latAndLong.lon)
