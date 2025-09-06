@@ -13,7 +13,7 @@ import BookingConfirmation from './pages/BookingConfirmation';
 import AllRides from './pages/AllRides';
 import { DriverHome } from './pages/DriverHome';
 import BookingPage from './components/BookingPage';
-
+import PickupToDestination from './components/PickupToDestination'
 
 const App = () => {
   return(
@@ -31,6 +31,7 @@ const App = () => {
         <Route exact path="/all-rides" element={<AllRides />} />
         <Route exact path="/driver-home" element={<DriverHome />} />
         <Route exact path="/booking-ride/:id" element={<BookingPage />} />
+        <Route exact path="/wayto-destination" element={<PickupToDestination />} />
       </Routes>
     </BrowserRouter>
   )

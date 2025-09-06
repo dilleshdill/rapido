@@ -5,7 +5,7 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-export default function BookingPage() {
+const  WaytoDestination = () => {
   const [pickup, setPickup] = useState(null);
   const [drop, setDrop] = useState(null);
   const [fare, setFare] = useState(null);
@@ -32,7 +32,7 @@ export default function BookingPage() {
   return (
     <div className="flex flex-col md:flex-row gap-4 ">
       {/* <PickPoints setPickup={setPickup} setDrop={setDrop} /> */}
-      <OSMMap pickup={pickup} setPickup={setPickup} drop={drop} setDrop={setDrop} />
+      <OSMMap dropLat={rideDetails.dropLat} dropLon={rideDetails.dropLon} />
 
       <div>
         <button 
@@ -76,3 +76,4 @@ export default function BookingPage() {
     </div>
   );
 }
+export default WaytoDestination;
