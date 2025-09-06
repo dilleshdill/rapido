@@ -36,9 +36,12 @@ export default function BookingPage() {
 
       <div>
         <button 
-        onClick={()=>{navigate('/wayto-destination'),{state:{rideDetails:rideDetails}}}}
-        >pickup to destination</button>
-      </div>
+            onClick={() => navigate('/wayto-destination', { state: { rideDetails }})}
+        >
+            Pickup to Destination
+        </button>
+    </div>
+
       {/* Ride details */}
       {/* <div className="bg-white h-screen p-8 rounded-2xl shadow-lg w-full md:w-1/2 text-center">
         <h2 className="text-2xl font-bold mb-4">Booking Status!</h2>

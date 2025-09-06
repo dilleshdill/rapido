@@ -4,6 +4,9 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import {io} from "socket.io-client";
+import { useNavigate,useLocation } from "react-router-dom";
+
+
 const defaultCenter = [20.5937, 78.9629];
 
 const FitBounds = ({ route }) => {
@@ -16,9 +19,15 @@ const FitBounds = ({ route }) => {
   return null;
 };
 
-const OSMMap = ({dropLat,dropLon}) => {
+const PickUpToDestination = () => {
 //   const [address1, setAddress1] = useState("etcherla");
 //   const [address2, setAddress2] = useState("srikakulam");
+    const location = useLocation();
+  const rideDetails = location.state?.rideDetails;
+  const dropLat = rideDetails.drop_lat;
+  const dropLon = rideDetails.drop_lon;
+  console.log(dropLat,dropLon)
+  console.log("rideDetals in PickUptoDestination page",rideDetails)
   const [location1, setLocation1] = useState(null);
 //   const [location2, setLocation2] = useState(null);
   const [route, setRoute] = useState([]);
@@ -47,19 +56,19 @@ const OSMMap = ({dropLat,dropLon}) => {
   
   useEffect(()=>{
   
-    const socket = io("http://localhost:5000");
-    socket.on("driverLocation",locationDetails =>{
-      console.log(locationDetails)
-      setLatAndLong({
-      lat:locationDetails.lat,
-      lon:locationDetails.lng,
-    });
-    console.log("dirverLocation socket",latAndLong)
-    })
-    showLocations(latAndLong.lat,latAndLong.lon)
-    return ()=>{
-      socket.off("driverLocation");
-    }
+    // const socket = io("http://localhost:5000");
+    // socket.on("driverLocation",locationDetails =>{
+    //   console.log(locationDetails)
+    //   setLatAndLong({
+    //   lat:locationDetails.lat,
+    //   lon:locationDetails.lng,
+    // });
+    // console.log("dirverLocation socket",latAndLong)
+    // })
+    showLocations()
+    // return ()=>{
+    //   socket.off("driverLocation");
+    // }
 
   },[latAndLong])
 
@@ -81,9 +90,9 @@ const OSMMap = ({dropLat,dropLon}) => {
     }
   };
 
-  const fetchRoute = async (loc1, dropLat,dropLon) => {
+  const fetchRoute = async (pickup_lat,pickup_lon, dropLat,dropLon) => {
     try {
-      const url = `https://router.project-osrm.org/route/v1/driving/${loc1.lon},${loc1.lat};${dropLon},${dropLat}?overview=full&geometries=geojson&alternatives=false&steps=true&annotations=true`;
+      const url = `https://router.project-osrm.org/route/v1/driving/${pickup_lon},${pickup_lat};${dropLon},${dropLat}?overview=full&geometries=geojson&alternatives=false&steps=true&annotations=true`;
       const res = await axios.get(url);
       const routeData = res.data.routes[0];
       const coords = routeData.geometry.coordinates.map((c) => [c[1], c[0]]);
@@ -95,13 +104,16 @@ const OSMMap = ({dropLat,dropLon}) => {
     }
   };
 
-  const showLocations = async () => {
-    const loc1 = await getCoordinates(address1);
+  const showLocations =  () => {
+    if (!rideDetails) return;
+
+    // const loc1 = await getCoordinates(rideDetails.pickup); // pickup address
+    // console.log("loc1".loc1)
     // const loc2 = await getCoordinates(address2);
-    if (loc1 && dropLat && dropLon) {
-      setLocation1(loc1);
+    if (rideDetails.pickup_lat && rideDetails.pickup_lon && dropLat && dropLon) {
+    //   setLocation1(loc1);
     //   setLocation2(loc2);
-      fetchRoute(loc1, dropLat,dropLon);
+      fetchRoute(rideDetails.pickup_lat,rideDetails.pickup_lon, dropLat,dropLon);
     } else {
       alert("Could not find one or both locations. Please enter valid addresses.");
     }
@@ -167,8 +179,11 @@ const OSMMap = ({dropLat,dropLon}) => {
           </>
         )}
       </MapContainer>
+      <div>
+
+      </div>
     </div>
   );
 };
 
-export default OSMMap;
+export default PickUpToDestination;
