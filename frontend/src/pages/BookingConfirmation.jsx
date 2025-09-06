@@ -13,6 +13,7 @@ const BookingConfirmation = () => {
   const [confirm, setConfirm] = useState(null);
     console.log("bookingRide",ride)
   useEffect(() => {
+    getData();
     socket.on("rideConfirmed", (rides) => {
       setConfirm(rides);
       console.log("rideConfirmed", rides);
