@@ -69,7 +69,7 @@ const createRide = async (req, res) => {
             if (res.rows.length > 0 && res.rows[0].status === "pending") {
                 getDrivers(ride, data, index + 1);
             }
-        }, 5000); // wait 15 seconds
+        }, 10000); // wait 15 seconds
     };
 
     getDrivers(ride, sortedDist, 0);

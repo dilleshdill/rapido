@@ -31,6 +31,6 @@ app.use("/check",checkCordinates)
 app.use("/upload", uploadRoutes);
 app.use("/rides",ridesRoute)
 
-app.listen(5000, () =>
+server.listen(5000, () =>
   console.log("🚀 Server running on http://localhost:5000")
 );

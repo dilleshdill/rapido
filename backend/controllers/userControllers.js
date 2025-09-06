@@ -17,11 +17,9 @@ async function addUser(req, res) {
 
 const getUserRides = async(req,res) =>{
   const {id,email} = req.user
-  console.log(id,email)
   const data = await pool.query(
     `SELECT * FROM rides WHERE $1 = user_id`,[id]
   ) 
-  console.log("data of rows",data.rows)
   res.status(200).json(data.rows)
 }
 

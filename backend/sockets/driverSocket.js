@@ -1,49 +1,63 @@
-import pool from "../config/db.js"
+import pool from "../config/db.js";
 
-const driverSocket = async (io) =>{
-    io.on("connection",(socket)=>{
-        socket.on("driverId",driverId => {
-            
-            socket.driverId = driverId
-            socket.join(driverId.toString())
-            console.log("driver id created",driverId)
+const driverSocket = (io) => {
+  io.on("connection", (socket) => {
+    // Driver registers himself
+    socket.on("driverId", (driverId) => {
+      socket.driverId = driverId;
+      socket.join(driverId.toString());
+      console.log("Driver connected:", driverId);
+    });
 
-        })
+    // Driver accepts ride
+    socket.on("rideAccepted", async (rideId) => {
+      if (!socket.driverId) return;
 
-        socket.on("rideAccepted",rideId => {
-            if (!socket.driverId ){
-                return
-            }
+      try {
+        const rides = await pool.query(`SELECT * FROM rides WHERE id = $1`, [rideId]);
 
-            const rides = pool.query(`SELECT * FROM rides WHERE id = $1`,[rideId])
-            if (rides.rows.length === 0 || rides.rows[0].status !== "pending" ){
-                io.to([socket.driverId]).emit("rideUnavilable",rideId)
-            }
+        if (rides.rows.length === 0 || rides.rows[0].status !== "pending") {
+          io.to(socket.driverId.toString()).emit("rideUnavailable", rideId);
+          return;
+        }
 
-            pool.query(
-                `UPDATE rides SET status=ongoing driver_id = $1 WEHRE id = $2`,[socket.driverId,rideId]
-            )
+        // Update ride status and assign driver
+        await pool.query(
+          `UPDATE rides SET status = 'ongoing', driver_id = $1 WHERE id = $2`,
+          [socket.driverId, rideId]
+        );
 
-            pool.query(
-                `UPDATE driver_rides SET is_avilable=FALSE WHERE driver_id = $1`,[socket.driverId]
-            )
-            
-            console.log("ride confirmed")
-            io.to(rides.rows[0].user_id).socket.emit("rideConfirmed",{
-                rideId,
-                driverId:socket.driverId
-            })
-            
-        })
+        // Mark driver unavailable
+        await pool.query(
+          `UPDATE drivers_rides SET is_available = FALSE WHERE driver_id = $1`,
+          [socket.driverId]
+        );
 
+        console.log("Ride confirmed for driver", socket.driverId);
 
-        socket.on("rideDeclined",rideId => {
-            console.log("ride declined")
-            pool.query(
-                `UPDATE rides SET status = cancel WHERE id = $1`,[rideId]
-            )
-        })
-    })
-}
+        io.to(rides.rows[0].user_id.toString()).emit("rideConfirmed", {
+          rideId,
+          driverId: socket.driverId,
+        });
 
-export default driverSocket
+      } catch (err) {
+        console.error("rideAccepted error:", err.message);
+      }
+    });
+
+    // Driver declines ride
+    socket.on("rideDeclined", async (rideId) => {
+      console.log("Ride declined by driver", socket.driverId);
+      try {
+        await pool.query(
+          `UPDATE rides SET status = 'cancelled' WHERE id = $1`,
+          [rideId]
+        );
+      } catch (err) {
+        console.error("rideDeclined error:", err.message);
+      }
+    });
+  });
+};
+
+export default driverSocket;
