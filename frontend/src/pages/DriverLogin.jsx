@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
+
 
 const DriverLogin = () => {
   const [email, setEmail] = useState("");
@@ -8,6 +10,7 @@ const DriverLogin = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
     const [latAndLong, setLatAndLong] = useState({ lat: 0, lon: 0 });
+    const navigate = useNavigate()
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -52,7 +55,9 @@ const DriverLogin = () => {
       if (res.status === 200) {
         Cookies.set("authToken", res.data.token, { expires: 7 });
         alert("Login Successful ✅");
-        console.log("User:", res.data.user);
+        navigate('/driver-home');
+
+        console.log("User:", res.data);
       }
     } catch (err) {
       setError(err.response?.data?.message || "Login Failed ❌");

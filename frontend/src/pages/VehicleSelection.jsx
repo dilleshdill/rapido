@@ -19,6 +19,7 @@ const VehicleSelection = () => {
   const [status,setStaus] = useState("");
   useEffect(()=>{
     socket.on("rideCancel",rideId=>{
+      console.log("ride cancelled at the vechile seletion",rideId)
       setStaus("cancelled")
     })
     return () => socket.off("rideCancel");

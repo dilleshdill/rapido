@@ -9,11 +9,12 @@ export const DriverHome = () => {
   useEffect(() => {
     // Listen for new ride events
     socket.on("newRide", (ride) => {
+        console.log("newRide is set",ride)
       setRide(ride);
     });
     
     socket.emit("driverId",4 ); // Example driver ID
-    
+
     // Cleanup listener on unmount
     return () => {
       socket.off("newRide");
