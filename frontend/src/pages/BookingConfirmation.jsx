@@ -34,8 +34,10 @@ const BookingConfirmation = () => {
 
   const getData = async () =>{
     try{
+        console.log(ride.id)
         const res = await axios.get(`http://localhost:5000/rides/ride-details?rideId = ${ride.id}`)
         if(res){
+            console.log("ride response",res)
             if (res.status === 200){
                 setConfirm(res.data)
                 console.log("called Function",res.data)
