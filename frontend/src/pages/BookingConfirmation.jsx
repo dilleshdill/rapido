@@ -76,7 +76,11 @@ const BookingConfirmation = () => {
             confirm && (
                 <button
                     className="px-6 py-2 !bg-yellow-400 text-white rounded-lg  transition"
-                    onClick={() => navigate(`/booking/:${confirm.id}`,state={rideDetails:confirm})}
+                    onClick={() =>
+                        navigate(`/booking/${confirm.id}`, {
+                            state: { rideDetails: confirm },
+                        })
+                        }
                     >
                     Go to your Ride
                 </button>

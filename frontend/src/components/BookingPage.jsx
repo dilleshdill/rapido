@@ -2,14 +2,15 @@ import { useState } from "react";
 import PickPoints from "./PickPoints";
 import OSMMap from "./OSMMap";
 import axios from "axios";
-import {useLocation} from "react-router-dom";
+import { useLocation } from "react-router-dom";
+
 
 export default function BookingPage() {
   const [pickup, setPickup] = useState(null);
   const [drop, setDrop] = useState(null);
   const [fare, setFare] = useState(null);
     const location = useLocation();
-    const {rideDetails} = location.state
+  const rideDetails = location.state?.rideDetails;
   const handleCalculateFare = async () => {
     if (!pickup || !drop) return alert("Please select both pickup and drop");
 
@@ -32,6 +33,14 @@ export default function BookingPage() {
       <OSMMap pickup={pickup} setPickup={setPickup} drop={drop} setDrop={setDrop} />
         <div className="bg-red-400 w-[50vw]">
             <p>raid Details</p>
+            {
+                rideDetails.map((item)=>{
+                    <div>
+                        <p>{item.id}</p>
+                        <p>{item.amount}</p>
+                    </div>
+                })
+            }
 
         </div>
     </div>
