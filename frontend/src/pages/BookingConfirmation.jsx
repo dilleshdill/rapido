@@ -4,7 +4,7 @@ import {io} from "socket.io-client";
 import OSMMap from "../components/OSMMap";
 import axios from "axios";
 
-const socket = io("http://localhost:5000");
+
 
 const BookingConfirmation = () => {
   const location = useLocation();
@@ -18,6 +18,7 @@ const BookingConfirmation = () => {
 
 
   useEffect(() => {
+    const socket = io("http://localhost:5000");
     socket.on("rideConfirmed", (rides) => {
       setConfirm(rides);
       console.log("rideConfirmed", rides);
