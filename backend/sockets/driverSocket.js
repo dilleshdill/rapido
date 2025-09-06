@@ -69,8 +69,7 @@ const driverSocket = (io) => {
                 rides.rows[0].pickup_lon
             );
 
-            console.log("driver in driverSocket", driver);
-
+            
             socket.emit("driverLocation", driver); 
             }, 2000);
 
