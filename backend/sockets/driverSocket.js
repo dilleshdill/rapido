@@ -29,7 +29,7 @@ const driverSocket = async (io) =>{
             )
             
             console.log("ride confirmed")
-            io.to([rides.rows[0].user_id]).socket.emit("rideConfirmed",{
+            io.to(rides.rows[0].user_id).socket.emit("rideConfirmed",{
                 rideId,
                 driverId:socket.driverId
             })
