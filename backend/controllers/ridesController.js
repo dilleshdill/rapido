@@ -1,18 +1,19 @@
 import pool from "../config/db.js";
+import io from "../server.js";
 
 const createRide = async (req, res) => {
     const {id,email} = req.user
-    console.log("createRide",id,email)
+    const ride = 0
     const { vehicle,pickup,drop,distance,price,pickupLat,pickupLon,dropLat,dropLon } = req.body;
     try {
-            const result = await pool.query(
-                `INSERT INTO rides (user_id, pickup_lat, pickup_lon, drop_lat, drop_lon, amount,distance,city,status,driver_id,name,vehicle)
-                VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
-                RETURNING *`,
-                [id,pickupLat,pickupLon,dropLat,dropLon,price,distance,pickup.split(",")[0],"pending",null,null,vehicle]
-            )
-
-            res.status(200).json(result.rows[0]);
+        const result = await pool.query(
+            `INSERT INTO rides (user_id, pickup_lat, pickup_lon, drop_lat, drop_lon, amount,distance,city,status,driver_id,name,vehicle)
+            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)                
+            RETURNING *`,
+            [id,pickupLat,pickupLon,dropLat,dropLon,price,distance,pickup.split(",")[0],"pending",null,null,vehicle]
+        )
+        ride = result.rows[0]
+        res.status(200).json(result.rows[0]);
     }
     catch (err) {
 
@@ -37,8 +38,47 @@ const createRide = async (req, res) => {
         LIMIT 1;
         `;
 
-        const sortedDist = await pool.query(query, [pickupLat, pickupLon, radius]);
-        
+    const sortedDist = await pool.query(query, [pickupLat, pickupLon, radius]);
+    console.log("driver avilable",sortedDist)
+    getDrivers(ride,sortedDist,0)
+
+    
+
+    const getDrivers = async(ride,data,index) => {
+        if (data.rows.length <= index){
+            await pool.query(
+                `UPDATE rides SET status = cancelled WHERE id = $1`,[ride.id]
+            )
+            console.log("ride canceled")
+            io.to([ride.user_id.toString()]).emit("rideCancel",ride.id) 
+        } 
+
+        const driver = data.rows[index]
+
+        io.to([driver.driver_id]).emit("newRide",{
+            rideId:ride.id,
+            distance,
+            price,
+            pickupLat,
+            pickupLon,
+            dropLat,
+            dropLon
+
+        })
+
+
+        setTimeout(()=>{
+
+            pool.query(`SELECT * FROM rides WHERE id = $1`,[ride.id])
+            .then((res) =>{
+                if (res.rows[0].status === "pending"){
+                    getDrivers(ride,data,index+1)
+                }
+            })
+        },15000)
+
+    } 
+
 };
 
 export default createRide ;
