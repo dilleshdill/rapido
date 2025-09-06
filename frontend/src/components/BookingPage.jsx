@@ -1,13 +1,15 @@
 import { useState } from "react";
 import PickPoints from "./PickPoints";
-import { OSMMap, calculateFare } from "./OSMMap";
+import OSMMap from "./OSMMap";
 import axios from "axios";
+import {useLocation} from "react-router-dom";
 
 export default function BookingPage() {
   const [pickup, setPickup] = useState(null);
   const [drop, setDrop] = useState(null);
   const [fare, setFare] = useState(null);
-
+    const location = useLocation();
+    const {rideDetails} = location.state
   const handleCalculateFare = async () => {
     if (!pickup || !drop) return alert("Please select both pickup and drop");
 
@@ -25,20 +27,13 @@ export default function BookingPage() {
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <h2 className="text-xl font-bold">Book a Ride</h2>
-
-      <PickPoints setPickup={setPickup} setDrop={setDrop} />
+    <div className="flex flex-col md:flex-row gap-4 ">
+      {/* <PickPoints setPickup={setPickup} setDrop={setDrop} /> */}
       <OSMMap pickup={pickup} setPickup={setPickup} drop={drop} setDrop={setDrop} />
+        <div className="bg-red-400 w-[50vw]">
+            <p>raid Details</p>
 
-      <button
-        onClick={handleCalculateFare}
-        className="bg-yellow-500 text-white py-2 px-4 rounded-lg"
-      >
-        Estimate Fare
-      </button>
-
-      {fare && <p className="text-lg font-bold">Estimated Fare: ₹{fare}</p>}
+        </div>
     </div>
   );
 }

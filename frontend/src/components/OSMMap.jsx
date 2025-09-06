@@ -2,9 +2,10 @@ import { useEffect, useState, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
-
+import io from "socket.io-client";
 const defaultCenter = [20.5937, 78.9629];
 
+const socket = io("http://localhost:5000");
 const FitBounds = ({ route }) => {
   const map = useMap();
   useEffect(() => {
@@ -39,7 +40,21 @@ const OSMMap = () => {
         }
       );
     }
+
   }, []);
+  useEffect(()=>{
+    socket.on("driverLocation",locationDetails =>{
+      setLatAndLong({
+      lat:locationDetails.lat,
+      lon:locationDetails.lon,
+    });
+    })
+    showLocations(latAndLong.lat,latAndLong.lon)
+    return ()=>{
+      socket.off("driverLocation");
+    }
+
+  },[latAndLong])
 
   const getCoordinates = async (address) => {
     try {
@@ -86,9 +101,9 @@ const OSMMap = () => {
   };
 
   return (
-    <div style={{ height: "100vh", width: "100vw", position: "relative" }}>
+    <div className="h-1/2 md:h-full w-full md:w-1/2">
       {/* Input controls */}
-      <div
+      {/* <div
         style={{
           position: "absolute",
           zIndex: 1000,
@@ -119,7 +134,7 @@ const OSMMap = () => {
         <button onClick={showLocations} style={{ marginTop: "8px" }}>
           Show Route
         </button>
-      </div>
+      </div> */}
 
       {/* Distance Info Box */}
       {distance && duration && (
@@ -148,13 +163,14 @@ const OSMMap = () => {
             ? defaultCenter
             : [latAndLong.lat, latAndLong.lon]
         }
-        zoom={5}
-        style={{ height: "100vh", width: "100vw" }}
+        zoom={10}
+        style={{ height: "100vh", width: "50vw" }}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
         {latAndLong.lat !== 0 && latAndLong.lon !== 0 && !location1 && !location2 && (
           <Marker position={[latAndLong.lat, latAndLong.lon]}>
+
             <Popup>Your Location</Popup>
           </Marker>
         )}

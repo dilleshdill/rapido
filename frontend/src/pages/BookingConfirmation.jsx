@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import io from "socket.io-client";
+import OSMMap from "../components/OSMMap";
 
 const socket = io("http://localhost:5000");
 
@@ -8,11 +9,13 @@ const BookingConfirmation = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const ride = location.state?.ride;
-    const [cofirm,setConfirm] = useState(null)
+    const [confirm,setConfirm] = useState(null)
 
   useEffect(()=>{
     socket.on("rideConfirmed",rides=>{
         setConfirm(rides)
+        console.log("rideConfirmed",rides)
+        
     });
     return () => {
       socket.off("rideConfimed");
@@ -41,8 +44,12 @@ const BookingConfirmation = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md text-center">
+    <div className="flex flex-col md:flex-row items-center justify-center  w-screen bg-gray-100">
+
+      <div className="w-screen bg-amber-400">
+        <OSMMap />
+      </div>
+        <div className="bg-white h-screen p-8 rounded-2xl shadow-lg w-screen text-center">
         <h2 className="text-2xl font-bold mb-4">Booking Status!</h2>
 
         <p className="mb-2">Vehicle: <strong>{ride.vehicle}</strong></p>
@@ -59,17 +66,17 @@ const BookingConfirmation = () => {
         </p>
 
         <div className="flex">
-            <button
+            {/* <button
           className="px-6 py-2 !bg-yellow-400 text-white rounded-lg  transition"
           onClick={() => navigate("/")}
         >
           Back to Home
-        </button>
+        </button> */}
         {
-            cofirm && (
+            confirm && (
                 <button
                     className="px-6 py-2 !bg-yellow-400 text-white rounded-lg  transition"
-                    onClick={() => navigate("/")}
+                    onClick={() => navigate(`/booking/:${confirm.id}`,state={rideDetails:confirm})}
                     >
                     Go to your Ride
                 </button>

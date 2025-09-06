@@ -95,7 +95,7 @@ const navigate = useNavigate()
                 </p>
                 <div className="flex  mt-4 gap-2">
                     <button
-                    onClick={()=>navigate(`/${ride.id}`)}
+                    onClick={()=>navigate(`/booking/${ride.id}`)}
                     className="mt-4 w-full !bg-yellow-400 text-black font-bold py-2 rounded-lg hover:bg-yellow-500 transition">
                     View Details
                     </button>
