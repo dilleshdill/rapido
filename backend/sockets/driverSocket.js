@@ -35,6 +35,7 @@ const driverSocket = (io) => {
             rides.rows[0].user_id
             );
 
+            console.log(rides.rows[0].user_id)
             io.to(rides.rows[0].user_id).emit("rideConfirmed", rides);
 
             // const driverRow = await pool.query(
