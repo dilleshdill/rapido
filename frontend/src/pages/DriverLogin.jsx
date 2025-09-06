@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 
 const DriverLogin = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("dilleshnakkina@gmail.com");
+  const [password, setPassword] = useState("123");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
     const [latAndLong, setLatAndLong] = useState({ lat: 0, lon: 0 });
