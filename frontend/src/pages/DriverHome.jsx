@@ -49,7 +49,7 @@ export const DriverHome = () => {
               <button
                 className="px-4 py-2 !bg-green-500 text-white rounded  transition"
                 onClick={() => {
-                  socket.emit("rideAccepted", ride.rideId);
+                  socket.emit("rideAccepted", ride.rideId),navigate(`/booking-ride/${ride.rideId}`);
                   
                 }}
               >
