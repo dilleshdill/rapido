@@ -9,10 +9,12 @@ import rapidoImage1 from "../assets/rapidoImage1.webp";
 import { FaUpload } from "react-icons/fa";
 import axios from "axios";
 
+
 const supportedCities = [
   "Bangalore", "Hyderabad", "Chennai", "Pune",
   "Mumbai", "Delhi", "Kolkata", "Jaipur", "Ahmedabad"
 ];
+
 
 const RegisterPage = () => {
   // Load initial state from localStorage or set defaults

@@ -11,6 +11,7 @@ import OSMMap from './components/OSMMap';
 import DriverLogin from './pages/DriverLogin';
 import BookingConfirmation from './pages/BookingConfirmation';
 import AllRides from './pages/AllRides';
+import { DriverHome } from './pages/DriverHome';
 
 const App = () => {
   return(
@@ -26,6 +27,7 @@ const App = () => {
         <Route exact path="/driver-login" element={<DriverLogin />} />
         <Route exact path="/booking-confirmation" element={<BookingConfirmation />} />
         <Route exact path="/all-rides" element={<AllRides />} />
+        <Route exact path="/driver-home" element={<DriverHome />} />
       </Routes>
     </BrowserRouter>
   )

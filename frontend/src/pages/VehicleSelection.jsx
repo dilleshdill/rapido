@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import bike1 from "../assets/bike1.jpg";
 import auto from "../assets/auto.jpg";
 import cab from "../assets/cab.jpg";
@@ -11,15 +11,24 @@ const vehicles = [
   { id: "auto", label: "Auto", image: auto,cost:10 },
   { id: "cab", label: "Cab", image: cab,cost:15 },
 ];
+import { io } from "socket.io-client";
+const socket = io("http://localhost:5000");
 
 const VehicleSelection = () => {
 
-
+  const [status,setStaus] = useState("");
+  useEffect(()=>{
+    socket.on("rideCancel",rideId=>{
+      setStaus("cancelled")
+    })
+    return () => socket.off("rideCancel");
+  })
   const [selected, setSelected] = useState("");
   const [pickup, setPickup] = useState("");
   const [drop, setDrop] = useState(null);
   const [distance, setDistance] = useState(null);
   const [isShow, setIsShow] = useState(false);
+
   const navigate = useNavigate();
 
   const getDistance = (dist) => {
@@ -34,6 +43,8 @@ const VehicleSelection = () => {
     }
     // You can add logic here to calculate distance or fetch route details
   }
+
+
 
   const setIntoBackend = async () => {
     const data = {

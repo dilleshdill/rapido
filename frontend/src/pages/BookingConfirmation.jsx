@@ -1,11 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import io from "socket.io-client";
+
+const socket = io("http://localhost:5000");
 
 const BookingConfirmation = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const ride = location.state?.ride;
+    const [cofirm,setConfirm] = useState(null)
 
+  useEffect(()=>{
+    socket.on("rideConfirmed",rides=>{
+        setConfirm(rides)
+    });
+    return () => {
+      socket.off("rideConfimed");
+    };
+  },[confirm])
   // Map status to colors
   const statusColors = {
     pending: "text-yellow-600 px-2 py-1 ",
@@ -46,12 +58,24 @@ const BookingConfirmation = () => {
           </span>
         </p>
 
-        <button
+        <div className="flex">
+            <button
           className="px-6 py-2 !bg-yellow-400 text-white rounded-lg  transition"
           onClick={() => navigate("/")}
         >
           Back to Home
         </button>
+        {
+            cofirm && (
+                <button
+                    className="px-6 py-2 !bg-yellow-400 text-white rounded-lg  transition"
+                    onClick={() => navigate("/")}
+                    >
+                    Go to your Ride
+                </button>
+            )
+        }
+        </div>
       </div>
     </div>
   );
