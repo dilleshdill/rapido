@@ -41,61 +41,61 @@ const driverSocket = (io) => {
             let driver = driverRow.rows[0];
             console.log("in driverSocket.js", driver);
 
-            const getDriverDistance = (dlat, dlon, ulat, ulon) => {
-    const step = 0.0003;
+//             const getDriverDistance = (dlat, dlon, ulat, ulon) => {
+//     const step = 0.0003;
 
-    if (dlat < ulat) dlat += step;
-    else dlat -= step;
+//     if (dlat < ulat) dlat += step;
+//     else dlat -= step;
 
-    if (dlon < ulon) dlon += step;
-    else dlon -= step;
+//     if (dlon < ulon) dlon += step;
+//     else dlon -= step;
 
-    return { lat: dlat, lng: dlon }; 
-};
+//     return { lat: dlat, lng: dlon }; 
+// };
 
-// Haversine formula to calculate distance in meters
-const getDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371e3; // meters
-    const φ1 = lat1 * Math.PI / 180;
-    const φ2 = lat2 * Math.PI / 180;
-    const Δφ = (lat2 - lat1) * Math.PI / 180;
-    const Δλ = (lon2 - lon1) * Math.PI / 180;
+// // Haversine formula to calculate distance in meters
+// const getDistance = (lat1, lon1, lat2, lon2) => {
+//     const R = 6371e3; // meters
+//     const φ1 = lat1 * Math.PI / 180;
+//     const φ2 = lat2 * Math.PI / 180;
+//     const Δφ = (lat2 - lat1) * Math.PI / 180;
+//     const Δλ = (lon2 - lon1) * Math.PI / 180;
 
-    const a = Math.sin(Δφ/2)**2 +
-              Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2)**2;
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+//     const a = Math.sin(Δφ/2)**2 +
+//               Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2)**2;
+//     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-    return R * c; // distance in meters
-};
+//     return R * c; // distance in meters
+// };
 
-// Interval to simulate driver moving
-const interval = setInterval(() => {
-    driver = getDriverDistance(
-        driver.lat,
-        driver.lng,
-        rides.rows[0].pickup_lat,
-        rides.rows[0].pickup_lon
-    );
+// // Interval to simulate driver moving
+// const interval = setInterval(() => {
+//     driver = getDriverDistance(
+//         driver.lat,
+//         driver.lng,
+//         rides.rows[0].pickup_lat,
+//         rides.rows[0].pickup_lon
+//     );
 
-    const distance = getDistance(
-        driver.lat,
-        driver.lng,
-        rides.rows[0].pickup_lat,
-        rides.rows[0].pickup_lon
-    );
+//     const distance = getDistance(
+//         driver.lat,
+//         driver.lng,
+//         rides.rows[0].pickup_lat,
+//         rides.rows[0].pickup_lon
+//     );
 
-    // Emit driver location every step
-    socket.emit("driverLocation", { driver, distance });
+//     // Emit driver location every step
+//     socket.emit("driverLocation", { driver, distance });
 
-    console.log("Driver:", driver, "Distance to user:", distance.toFixed(2), "m");
+//     console.log("Driver:", driver, "Distance to user:", distance.toFixed(2), "m");
 
-    // Check if driver has arrived
-    if (distance < 50) {
-        socket.emit("DriverArrived", { message: "Driver has arrived!" });
-        clearInterval(interval); // stop simulation
-    }
+//     // Check if driver has arrived
+//     if (distance < 50) {
+//         socket.emit("DriverArrived", { message: "Driver has arrived!" });
+//         clearInterval(interval); // stop simulation
+//     }
 
-}, 2000);
+// }, 2000);
 
 
 
