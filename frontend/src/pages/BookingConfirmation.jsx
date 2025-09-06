@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import io from "socket.io-client";
+import {io} from "socket.io-client";
 import OSMMap from "../components/OSMMap";
 
 const socket = io("http://localhost:5000");
@@ -20,7 +20,7 @@ const BookingConfirmation = () => {
     return () => {
       socket.off("rideConfirmed"); // ✅ fixed typo
     };
-  }, []); // ✅ only once on mount
+  }, [confirm]); // ✅ only once on mount
 
   // Map status to colors
   const statusColors = {
@@ -74,7 +74,7 @@ const BookingConfirmation = () => {
         <div className="flex justify-center">
           {confirm && (
             <button
-              className="px-6 py-2 bg-yellow-400 text-white rounded-lg transition"
+              className="px-6 py-2 !bg-yellow-400 text-white rounded-lg transition"
               onClick={() =>
                 navigate(`/booking/${confirm.id}`, {
                   state: { rideDetails: confirm },
