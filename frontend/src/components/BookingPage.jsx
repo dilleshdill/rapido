@@ -11,6 +11,7 @@ export default function BookingPage() {
   const [fare, setFare] = useState(null);
     const location = useLocation();
   const rideDetails = location.state?.rideDetails;
+  console.log("rideDetals in booking page",rideDetails)
   const handleCalculateFare = async () => {
     if (!pickup || !drop) return alert("Please select both pickup and drop");
 
@@ -31,7 +32,7 @@ export default function BookingPage() {
     <div className="flex flex-col md:flex-row gap-4 ">
       {/* <PickPoints setPickup={setPickup} setDrop={setDrop} /> */}
       <OSMMap pickup={pickup} setPickup={setPickup} drop={drop} setDrop={setDrop} />
-        <div className="bg-red-400 w-[50vw]">
+        {/* <div className="bg-red-400 w-[50vw]">
             <p>raid Details</p>
             {
                 rideDetails.map((item)=>{
@@ -42,7 +43,7 @@ export default function BookingPage() {
                 })
             }
 
-        </div>
+        </div> */}
     </div>
   );
 }

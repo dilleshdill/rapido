@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {io} from "socket.io-client";
 import OSMMap from "../components/OSMMap";
+import axios from "axios";
 
 const socket = io("http://localhost:5000");
 
@@ -10,7 +11,7 @@ const BookingConfirmation = () => {
   const navigate = useNavigate();
   const ride = location.state?.ride;
   const [confirm, setConfirm] = useState(null);
-
+    console.log("bookingRide",ride)
   useEffect(() => {
     socket.on("rideConfirmed", (rides) => {
       setConfirm(rides);
@@ -29,6 +30,21 @@ const BookingConfirmation = () => {
     completed: "text-blue-700 px-2 py-1 ",
     cancelled: "text-red-700 px-2 py-1 ",
   };
+
+  const getData = async () =>{
+    try{
+        const res = await axios.get(`http://localhost:5000/rides/ride-details?rideId = ${ride.id}`)
+        if(res){
+            if (res.status === 200){
+                setConfirm(res.data)
+                console.log("called Function",res.data)
+            }
+        }
+        
+    }catch(e){
+        console.log("error",e)
+    }
+  }
 
   if (!ride) {
     return (
