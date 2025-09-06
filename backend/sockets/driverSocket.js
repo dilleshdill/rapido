@@ -31,7 +31,7 @@ const driverSocket = (io) => {
           [socket.driverId]
         );
 
-        console.log("Ride confirmed for driver", socket.driverId);
+        console.log("Ride confirmed for driver", socket.driverId,rides.rows[0].user_id);
         io.to(rides.rows[0].user_id.toString()).emit("rideConfirmed", {
           rides
         });
