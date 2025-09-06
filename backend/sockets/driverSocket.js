@@ -2,14 +2,14 @@ import pool from "../config/db.js";
 
 const driverSocket = (io) => {
   io.on("connection", (socket) => {
-    // Driver registers himself
+    
     socket.on("driverId", (driverId) => {
       socket.driverId = driverId;
       socket.join(driverId.toString());
       console.log("Driver connected:", driverId);
     });
 
-    // Driver accepts ride
+    
     socket.on("rideAccepted", async (rideId) => {
       if (!socket.driverId) return;
 

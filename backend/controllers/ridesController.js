@@ -75,4 +75,13 @@ const createRide = async (req, res) => {
     getDrivers(ride, sortedDist, 0);
 };
 
-export default createRide;
+const getRides = async(req,res) => {
+    const {id} = req.params
+
+    const data = await pool.query(
+        `SELELCT * FROM rides WHERE id = $1`,[id]
+    )
+    res.status(200).json(data)
+}
+
+export default {createRide,getRides};
