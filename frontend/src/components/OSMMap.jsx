@@ -1,11 +1,11 @@
+
 import { useEffect, useState, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
-import io from "socket.io-client";
+import {io} from "socket.io-client";
 const defaultCenter = [20.5937, 78.9629];
 
-const socket = io("http://localhost:5000");
 const FitBounds = ({ route }) => {
   const map = useMap();
   useEffect(() => {
@@ -26,28 +26,35 @@ const OSMMap = () => {
   const [duration, setDuration] = useState(null);
   const [latAndLong, setLatAndLong] = useState({ lat: 0, lon: 0 });
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLatAndLong({
-            lat: position.coords.latitude,
-            lon: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.error(error.message);
-        }
-      );
-    }
+  // useEffect(() => {
 
-  }, []);
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(
+  //       (position) => {
+  //         setLatAndLong({
+  //           lat: position.coords.latitude,
+  //           lon: position.coords.longitude,
+  //         });
+  //       },
+  //       (error) => {
+  //         console.error(error.message);
+  //       }
+  //     );
+  //   }
+
+  // }, []);
+  
+  
   useEffect(()=>{
+  
+    const socket = io("http://localhost:5000");
     socket.on("driverLocation",locationDetails =>{
+      console.log(locationDetails)
       setLatAndLong({
       lat:locationDetails.lat,
       lon:locationDetails.lng,
     });
+    console.log("dirverLocation socket",latAndLong)
     })
     showLocations(latAndLong.lat,latAndLong.lon)
     return ()=>{
@@ -102,41 +109,7 @@ const OSMMap = () => {
 
   return (
     <div className="h-1/2 md:h-full w-full md:w-1/2">
-      {/* Input controls */}
-      {/* <div
-        style={{
-          position: "absolute",
-          zIndex: 1000,
-          top: 10,
-          left: "50%",
-          transform: "translateX(-50%)",
-          background: "white",
-          padding: "10px",
-          borderRadius: "8px",
-          boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
-        }}
-      >
-        <h3>Enter Pickup & Drop</h3>
-        <input
-          type="text"
-          placeholder="Pickup address"
-          value={address1}
-          onChange={(e) => setAddress1(e.target.value)}
-        />
-        <br />
-        <input
-          type="text"
-          placeholder="Drop address"
-          value={address2}
-          onChange={(e) => setAddress2(e.target.value)}
-        />
-        <br />
-        <button onClick={showLocations} style={{ marginTop: "8px" }}>
-          Show Route
-        </button>
-      </div> */}
 
-      {/* Distance Info Box */}
       {distance && duration && (
         <div
           style={{

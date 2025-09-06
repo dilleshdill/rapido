@@ -24,11 +24,10 @@ const BookingConfirmation = () => {
     });
 
     return () => {
-      socket.off("rideConfirmed"); // ✅ fixed typo
+      socket.off("rideConfirmed"); 
     };
-  }, []); // ✅ only once on mount
+  }, [confirm]);
 
-  // Map status to colors
   const statusColors = {
     pending: "text-yellow-600 px-2 py-1 ",
     confirmed: "text-green-700 px-2 py-1 ",
@@ -72,9 +71,9 @@ const BookingConfirmation = () => {
 
   return (
     <div className="flex flex-col md:flex-row items-center justify-center w-screen bg-gray-100">
-      {/* Map */}
+      
       <div className="w-full md:w-1/2 h-screen">
-        <OSMMap />
+        <OSMMap pickuplat={displayRide.pickup_lat} pickuplng={displayRide.pickup_lon}/>
       </div>
 
       {/* Ride details */}
@@ -95,7 +94,7 @@ const BookingConfirmation = () => {
         </p>
 
         <div className="flex justify-center">
-          {confirm && (
+          {confirm && confirm.status === "ongoing" && (
             <button
               className="px-6 py-2 !bg-yellow-400 text-white rounded-lg transition"
               onClick={() =>
