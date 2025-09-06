@@ -47,7 +47,7 @@ export const DriverHome = () => {
 
             <div className="flex justify-end gap-4">
               <button
-                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                className="px-4 py-2 !bg-green-500 text-white rounded  transition"
                 onClick={() => {
                   socket.emit("rideAccepted", ride.rideId);
                   
@@ -56,7 +56,7 @@ export const DriverHome = () => {
                 Accept
               </button>
               <button
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+                className="px-4 py-2 !bg-red-500 text-white rounded transition"
                 onClick={() => 
                 {
                     socket.emit("rideDeclined",ride.rideId)
