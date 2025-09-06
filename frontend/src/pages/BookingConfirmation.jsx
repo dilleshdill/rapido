@@ -11,9 +11,13 @@ const BookingConfirmation = () => {
   const navigate = useNavigate();
   const ride = location.state?.ride;
   const [confirm, setConfirm] = useState(null);
-    console.log("bookingRide",ride)
+
+  useEffect(()=>{
+    getData()
+  },[])
+
+
   useEffect(() => {
-    getData();
     socket.on("rideConfirmed", (rides) => {
       setConfirm(rides);
       console.log("rideConfirmed", rides);
@@ -22,7 +26,7 @@ const BookingConfirmation = () => {
     return () => {
       socket.off("rideConfirmed"); // ✅ fixed typo
     };
-  }, [confirm]); // ✅ only once on mount
+  }, []); // ✅ only once on mount
 
   // Map status to colors
   const statusColors = {
@@ -39,7 +43,6 @@ const BookingConfirmation = () => {
     const res = await axios.get(
       `http://localhost:5000/rides/ride-details?rideId=${ride.id}` // ✅ no space
     );
-    console.log("calling respose",res.data)
     if (res.status === 200) {
       setConfirm(res.data);
       console.log("Ride response:", res.data);
