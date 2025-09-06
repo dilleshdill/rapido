@@ -88,7 +88,7 @@ const getRides = async(req,res) => {
     return res.status(404).json({ message: "Ride not found" });
     }
 
-    console.log("Ride Data:", data.rows[0]);
+    
     res.status(200).json(data.rows[0]);
 
 }
