@@ -32,24 +32,23 @@ const BookingConfirmation = () => {
     cancelled: "text-red-700 px-2 py-1 ",
   };
 
-  const getData = async () =>{
-    try{
-        console.log(ride.id)
-        const res = await axios.get("http://localhost:5000/rides/ride-details", {
-            params: { rideId: ride.id },
-            });
-        if(res){
-            console.log("ride response",res.data)
-            if (res.status === 200){
-                setConfirm(res.data)
-                console.log("called Function",res.data)
-            }
-        }
-        
-    }catch(e){
-        console.log("error",e)
+  const getData = async () => {
+  try {
+    console.log("Ride ID:", ride.id);
+
+    const res = await axios.get(
+      `http://localhost:5000/rides/ride-details?rideId=${ride.id}` // ✅ no space
+    );
+    console.log("calling respose",res.data)
+    if (res.status === 200) {
+      setConfirm(res.data);
+      console.log("Ride response:", res.data);
     }
+  } catch (e) {
+    console.error("Error fetching ride details:", e);
   }
+};
+
 
   if (!ride) {
     return (
