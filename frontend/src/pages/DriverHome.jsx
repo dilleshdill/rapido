@@ -12,7 +12,7 @@ export const DriverHome = () => {
         console.log("newRide is set",ride)
       setRide(ride);
     });
-    
+    console.log("calling socket ")
     socket.emit("driverId",4 ); // Example driver ID
 
     // Cleanup listener on unmount
