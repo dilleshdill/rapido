@@ -23,13 +23,13 @@ useEffect(() => {
 
   socket.emit("userId", 203); // must match DB email
 
-  socket.on("rideSuccess", (data) => {
-    console.log("🎉 rideSuccess received:", data);
-  });
+  // socket.on("rideSuccess", (data) => {
+  //   console.log("🎉 rideSuccess received:", data);
+  // });
 
-  return () => {
-    socket.off("rideSuccess");
-  };
+  // return () => {
+  //   socket.off("rideSuccess");
+  // };
 }, []); 
 
   
