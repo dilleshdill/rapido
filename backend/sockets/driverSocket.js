@@ -2,118 +2,67 @@ import pool from "../config/db.js";
 
 const driverSocket = (io) => {
   io.on("connection", (socket) => {
-    
+
+    // ---------------- DRIVER ----------------
     socket.on("driverId", (driverId) => {
       socket.driverId = driverId;
       socket.join(driverId.toString());
       console.log("Driver connected:", driverId);
     });
 
+    // ---------------- USER ----------------
     socket.on("userId", (userId) => {
-      socket.join(userId.toString());
-      console.log("User Connected", userId);
+      socket.userId = userId.toString();
+      socket.join(socket.userId); // Only the user's socket joins their own room
+      console.log(`User ${socket.userId} joined room user_${socket.userId}`);
     });
 
+    // ---------------- RIDE ACCEPT ----------------
     socket.on("rideAccepted", async (rideId) => {
-        if (!socket.driverId) return;
+      if (!socket.driverId) return;
 
-        try {
-            const rides = await pool.query(`SELECT * FROM rides WHERE id = $1`, [rideId]);
-            if (rides.rows.length === 0 || rides.rows[0].status !== "pending") {
-            io.to(socket.driverId.toString()).emit("rideUnavailable", rideId);
-            return;
-            }
-
-            await pool.query(
-            `UPDATE rides SET status = 'ongoing', driver_id = $1 WHERE id = $2`,
-            [socket.driverId, rideId]
-            );
-
-            console.log(
-            "Ride confirmed for driver",
-            socket.driverId,
-            rides.rows[0].user_id
-            );
-
-            const userRoom = rides.rows[0].user_id.toString();
-            const socketsInRoom = await io.in(userRoom).fetchSockets();
-            console.log("Sockets in room:", socketsInRoom.length); 
-            console.log(userRoom)
-            
-            io.to(userRoom).emit("rideSuccess",{ride:rides.rows[0]})
-            io.to(socket.driverId.toString()).emit("rideConfirmed",rides.rows[0]);
-            // const driverRow = await pool.query(
-            // `SELECT * FROM drivers_rides WHERE driver_id = $1`, 
-            // [socket.driverId]
-            // );
-
-            // let driver = driverRow.rows[0];
-        
-            // const getDriverDistance = (dlat, dlon, ulat, ulon) => {
-            // const step = 0.0003;
-            // if (dlat < ulat) dlat += step;
-            // else dlat -= step;
-            // if (dlon < ulon) dlon += step;
-            // else dlon -= step;
-            // return { lat: dlat, lng: dlon };
-            // };
-
-            // const getDistance = (lat1, lon1, lat2, lon2) => {
-            // const R = 6371e3; // meters
-            // const φ1 = lat1 * Math.PI / 180;
-            // const φ2 = lat2 * Math.PI / 180;
-            // const Δφ = (lat2 - lat1) * Math.PI / 180;
-            // const Δλ = (lon2 - lon1) * Math.PI / 180;
-
-            // const a =
-            //     Math.sin(Δφ / 2) ** 2 +
-            //     Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) ** 2;
-            // const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-            // return R * c;
-            // };
-
-            // const interval = setInterval(() => {
-            // driver = getDriverDistance(
-            //     driver.lat,
-            //     driver.lng,
-            //     rides.rows[0].pickup_lat,
-            //     rides.rows[0].pickup_lon
-            // );
-
-            // const distance = getDistance(
-            //     driver.lat,
-            //     driver.lng,
-            //     rides.rows[0].pickup_lat,
-            //     rides.rows[0].pickup_lon
-            // );
-
-            // console.log("driverSocket.js sending to user:", rides.rows[0].user_id);
-
-            // io.to(rides.rows[0].user_id).emit("driverLocation", { driver, distance });
-            
-            // if (distance < 50) {
-            //     socket.emit("DriverArrived", { message: "Driver has arrived!" });
-            //     clearInterval(interval);
-            // }
-            // }, 2000);
-
-        } catch (err) {
-            console.error("rideAccepted error:", err.message);
+      try {
+        const rides = await pool.query(`SELECT * FROM rides WHERE id = $1`, [rideId]);
+        if (rides.rows.length === 0 || rides.rows[0].status !== "pending") {
+          io.to(socket.driverId.toString()).emit("rideUnavailable", rideId);
+          return;
         }
-        });
-    socket.on("rideDeclined", async (rideId) => {
-    console.log("Ride declined by driver", socket.driverId);
-    try {
+
         await pool.query(
-            `UPDATE rides SET status = 'cancelled' WHERE id = $1`,
-            [rideId]
-            );
-        } catch (err) {                
-            console.error("rideDeclined error:", err.message);
+          `UPDATE rides SET status = 'ongoing', driver_id = $1 WHERE id = $2`,
+          [socket.driverId, rideId]
+        );
+
+        const userId = rides.rows[0].user_id.toString();
+
+        // Fetch sockets in the room
+        const socketsInRoom = await io.in(userId).fetchSockets();
+        console.log("Sockets in room for user", userId, ":", socketsInRoom.map(s => s.id));
+
+        if (socketsInRoom.length > 0) {
+          io.to(userId).emit("rideSuccess", rides.rows[0]);
+          io.to(socket.driverId.toString()).emit("rideConfirmed", rides.rows[0]);
+          console.log(`✅ rideSuccess emitted to user ${userId}`);
+        } else {
+          console.log(`⚠️ User ${userId} not connected yet`);
         }
-        });
+
+      } catch (err) {
+        console.error("rideAccepted error:", err.message);
+      }
     });
-    };
+
+    // ---------------- DISCONNECT ----------------
+    socket.on("disconnect", () => {
+      if (socket.userId) {
+        console.log(`User disconnected: ${socket.userId}, Socket ID: ${socket.id}`);
+      }
+      if (socket.driverId) {
+        console.log(`Driver disconnected: ${socket.driverId}, Socket ID: ${socket.id}`);
+      }
+    });
+
+  });
+};
 
 export default driverSocket;

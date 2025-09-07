@@ -19,6 +19,8 @@ const VehicleSelection = () => {
   const [status,setStaus] = useState("");
   console.log(status)
 
+  
+
   useEffect(()=>{
     const socket = io("http://localhost:5000");
 

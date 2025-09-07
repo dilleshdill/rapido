@@ -1,9 +1,9 @@
-import React, { useEffect,useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from "axios";
-import {io} from "socket.io-client";
-
+import { useEffect } from "react";
+import { io } from "socket.io-client";
 
 
 const Home = () => {
@@ -17,7 +17,8 @@ const Home = () => {
   const navigate = useNavigate();
 
 
-  useEffect(() => {
+  
+useEffect(() => {
   const socket = io("http://localhost:5000");
 
   socket.emit("userId", 203); // must match DB email
@@ -31,7 +32,6 @@ const Home = () => {
     socket.disconnect();
   };
 }, []); 
-
 
   
   const fetchSuggestions = async (input) => {
