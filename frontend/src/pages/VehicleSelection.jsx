@@ -29,10 +29,14 @@ const VehicleSelection = () => {
       console.log("ride cancelled at the vechile seletion",rideId)
       setStaus("cancelled")
     })
+    socket.on("rideSuccess", (data) => {
+    console.log("🎉 rideSuccess received:", data);})
     return () => {
       
       socket.off("rideCancel");
+      socket.off("rideSuccess");
     }
+
   })
   const [selected, setSelected] = useState("");
   const [pickup, setPickup] = useState("");

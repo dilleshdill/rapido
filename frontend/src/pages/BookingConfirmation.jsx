@@ -14,17 +14,15 @@ const BookingConfirmation = () => {
   useEffect(()=>{
 
     getData();
-    socket.on("rideSuccess", (data) => {
-    console.log("🎉 rideSuccess received:", data);
+    // socket.on("rideSuccess", (data) => {
+    // console.log("🎉 rideSuccess received:", data);
   });
 
   return () => {
     socket.off("rideSuccess");
   };
   },[])
--
   
-
   const statusColors = {
     pending: "text-yellow-600 px-2 py-1 ",
     confirmed: "text-green-700 px-2 py-1 ",
