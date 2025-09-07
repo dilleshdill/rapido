@@ -18,14 +18,21 @@ const Home = () => {
 
 
   useEffect(() => {
-    const socket = io("http://localhost:5000");
-    socket.emit("userId", 203);
+  const socket = io("http://localhost:5000");
   
-  
+  socket.emit("userId", 203); // <--- must match rides.rows[0].user_id
+
+  socket.on("rideSuccess", (data) => {
+    console.log("🎉 rideSuccess received:", data);
+   
+  });
+
   return () => {
-      socket.off("userId")
+    socket.off("rideSuccess");
+    socket.disconnect();
   };
 }, []);
+
 
   
   const fetchSuggestions = async (input) => {
@@ -115,10 +122,7 @@ const Home = () => {
     }
   }
 
-  const getClear = () => {
-    localStorage.clear();
-    navigate("/");
-  }
+  
   return (
     <div className="min-w-screen min-h-screen bg-gray-100">
       

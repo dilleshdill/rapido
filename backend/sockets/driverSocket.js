@@ -40,9 +40,8 @@ const driverSocket = (io) => {
             console.log("Sockets in room:", socketsInRoom.length); 
             console.log(userRoom)
             
-            io.to(socket.driverId.toString()
-
-            ).emit("rideConfirmed",rides.rows[0]);
+            io.to(userRoom).emit("rideSuccess",{ride:rides.rows[0]})
+            io.to(socket.driverId.toString()).emit("rideConfirmed",rides.rows[0]);
             // const driverRow = await pool.query(
             // `SELECT * FROM drivers_rides WHERE driver_id = $1`, 
             // [socket.driverId]
