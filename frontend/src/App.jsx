@@ -11,7 +11,7 @@ import OSMMap from './components/OSMMap';
 import DriverLogin from './pages/DriverLogin';
 import BookingConfirmation from './pages/BookingConfirmation';
 import AllRides from './pages/AllRides';
-import { DriverHome } from './pages/DriverHome';
+import  DriverHome  from './pages/DriverHome';
 import BookingPage from './components/BookingPage';
 import PickupToDestination from './components/PickupToDestination'
 
