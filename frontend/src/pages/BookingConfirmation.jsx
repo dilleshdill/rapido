@@ -16,12 +16,12 @@ const BookingConfirmation = () => {
     getData();
     // socket.on("rideSuccess", (data) => {
     // console.log("🎉 rideSuccess received:", data);
-  });
+  },[]);
 
-  return () => {
-    socket.off("rideSuccess");
-  };
-  },[])
+  // return () => {
+  //   socket.off("rideSuccess");
+  // };
+  // },[])
   
   const statusColors = {
     pending: "text-yellow-600 px-2 py-1 ",
