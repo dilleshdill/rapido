@@ -4,15 +4,25 @@ import OSMMap from "./OSMMap";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { io } from "socket.io-client";
 
 export default function BookingPage() {
   const [pickup, setPickup] = useState(null);
   const [drop, setDrop] = useState(null);
   const [fare, setFare] = useState(null);
   const navigate = useNavigate();
-    const location = useLocation();
+  const location = useLocation();
   const rideDetails = location.state?.rideDetails;
-  console.log("rideDetals in booking page",rideDetails)
+
+  useEffect(() => {
+    const socket = io("http://localhost:5000")
+    socket.on("rideConfirmed",ride => {
+        console.log("ride Confiremd successfully")
+    })
+  } )
+
+
   const handleCalculateFare = async () => {
     if (!pickup || !drop) return alert("Please select both pickup and drop");
 
@@ -28,6 +38,8 @@ export default function BookingPage() {
       console.error("OSRM error:", err);
     }
   };
+
+
 
   return (
     <div className="flex flex-col md:flex-row gap-4 ">

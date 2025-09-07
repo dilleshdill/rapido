@@ -14,11 +14,16 @@ export const DriverHome = () => {
             console.log("newRide is set",ride)
         setRide(ride);
         });
+
+        socket.on("rideConfirmed",ride => {
+        console.log("ride Confiremd successfully")
+    })
         console.log("calling socket ")
         
         return () => {
         socket.off("driverID")
         socket.off("newRide");
+        
         };
     }, []);
 

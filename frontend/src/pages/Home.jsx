@@ -20,16 +20,10 @@ const Home = () => {
   useEffect(() => {
     const socket = io("http://localhost:5000");
     socket.emit("userId", 202);
-
-    
-    socket.on("rideConfirmed", (ride) => {
-      console.log("Ride confirmed received:", ride);
-      
-    });
   
   
   return () => {
-      socket.off("rideConfirmed");
+      socket.off("userId")
   };
 }, []);
 
