@@ -21,7 +21,7 @@ const Home = () => {
 useEffect(() => {
   const socket = io("http://localhost:5000");
 
-  socket.emit("userId", 204); // must match DB email
+  socket.emit("userId", 203); // must match DB email
 
   // socket.on("rideSuccess", (data) => {
   //   console.log("🎉 rideSuccess received:", data);
