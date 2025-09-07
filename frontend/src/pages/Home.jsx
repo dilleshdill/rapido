@@ -19,7 +19,7 @@ const Home = () => {
 
   
 useEffect(() => {
-  const socket = io("http://localhost:5000");
+  const socket = io("http://localhost:5000",{autoConnect :false});
 
   socket.emit("userId", 203); // must match DB email
 
@@ -29,7 +29,6 @@ useEffect(() => {
 
   return () => {
     socket.off("rideSuccess");
-    socket.disconnect();
   };
 }, []); 
 
