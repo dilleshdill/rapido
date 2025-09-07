@@ -15,7 +15,7 @@ export const DriverHome = () => {
         setRide(ride);
         });
 
-        socket.on("rideConfirmed",ride => {
+        socket.on("rideConfirmed",(ride) => {
         console.log("ride Confiremd successfully",ride)
     })
         console.log("calling socket ")
