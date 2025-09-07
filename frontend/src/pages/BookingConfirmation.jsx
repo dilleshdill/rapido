@@ -22,7 +22,7 @@ const BookingConfirmation = () => {
     socket.off("rideSuccess");
   };
   },[])
-
+-
   
 
   const statusColors = {
