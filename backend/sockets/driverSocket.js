@@ -37,10 +37,12 @@ const driverSocket = (io) => {
 
             const userRoom = rides.rows[0].user_id.toString();
             const socketsInRoom = await io.in(userRoom).fetchSockets();
-            console.log("Sockets in room:", socketsInRoom.length); // should be >= 1
-
-            // Emit to user
-            io.to(userRoom).emit("rideConfirmed", rides.rows[0]);
+            console.log("Sockets in room:", socketsInRoom.length); 
+            console.log(userRoom)
+            
+            io.to(socket.driverId
+                
+            ).emit("rideConfirmed",rides.rows[0]);
             // const driverRow = await pool.query(
             // `SELECT * FROM drivers_rides WHERE driver_id = $1`, 
             // [socket.driverId]
