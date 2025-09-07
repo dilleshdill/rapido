@@ -4,8 +4,7 @@ import OSMMap from "./OSMMap";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { io } from "socket.io-client";
+
 
 export default function BookingPage() {
   const [pickup, setPickup] = useState(null);
@@ -15,11 +14,8 @@ export default function BookingPage() {
   const location = useLocation();
   const rideDetails = location.state?.rideDetails;
 
-  useEffect(() => {
-    const socket = io("http://localhost:5000")
-    
-  } )
-
+  
+  
 
   const handleCalculateFare = async () => {
     if (!pickup || !drop) return alert("Please select both pickup and drop");

@@ -17,12 +17,12 @@ import { io } from "socket.io-client";
 const VehicleSelection = () => {
 
   const [status,setStaus] = useState("");
+  console.log(status)
+
   useEffect(()=>{
     const socket = io("http://localhost:5000");
 
-    socket.on("rideSuccess",ride=>{
-      console.log("rideSuccess",ride)
-    })
+    
     socket.on("rideCancel",rideId=>{
       console.log("ride cancelled at the vechile seletion",rideId)
       setStaus("cancelled")

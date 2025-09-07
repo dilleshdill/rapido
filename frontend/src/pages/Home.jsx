@@ -13,25 +13,24 @@ const Home = () => {
   const [dropSuggestions, setDropSuggestions] = useState([]);
   const [location1, setLocation1] = useState(null);
   const [location2, setLocation2] = useState(null);
-
+  console.log(location1,location2)
   const navigate = useNavigate();
 
 
   useEffect(() => {
   const socket = io("http://localhost:5000");
-  
-  socket.emit("userId", 203); // <--- must match rides.rows[0].user_id
+
+  socket.emit("userId", 203); // must match DB email
 
   socket.on("rideSuccess", (data) => {
     console.log("🎉 rideSuccess received:", data);
-   
   });
 
   return () => {
     socket.off("rideSuccess");
     socket.disconnect();
   };
-}, []);
+}, []); 
 
 
   
