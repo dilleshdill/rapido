@@ -47,7 +47,7 @@ const OSMMap = () => {
   
   useEffect(()=>{
   
-    const socket = io("http://localhost:5000",{autoConnect :false});
+    const socket = io("http://localhost:5000");
     socket.on("driverLocation",locationDetails =>{
       console.log(locationDetails)
       setLatAndLong({

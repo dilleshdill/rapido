@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import { useNavigate } from "react-router-dom";
-const socket = io("http://localhost:5000",{autoConnect :false});
+const socket = io("http://localhost:5000");
 
 export const DriverHome = () => {
   const [ride, setRide] = useState(null);
