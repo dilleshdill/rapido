@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import OSMMap from "../components/OSMMap";
 import axios from "axios";
 
+
 const BookingConfirmation = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ const BookingConfirmation = () => {
   const [confirm, setConfirm] = useState(null);
 
   useEffect(()=>{
+
     getData()
   },[])
 

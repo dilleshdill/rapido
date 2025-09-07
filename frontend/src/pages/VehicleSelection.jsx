@@ -12,17 +12,25 @@ const vehicles = [
   { id: "cab", label: "Cab", image: cab,cost:15 },
 ];
 import { io } from "socket.io-client";
-const socket = io("http://localhost:5000");
+
 
 const VehicleSelection = () => {
 
   const [status,setStaus] = useState("");
   useEffect(()=>{
+    const socket = io("http://localhost:5000");
+
+    socket.on("rideSuccess",ride=>{
+      console.log("rideSuccess",ride)
+    })
     socket.on("rideCancel",rideId=>{
       console.log("ride cancelled at the vechile seletion",rideId)
       setStaus("cancelled")
     })
-    return () => socket.off("rideCancel");
+    return () => {
+      
+      socket.off("rideCancel");
+    }
   })
   const [selected, setSelected] = useState("");
   const [pickup, setPickup] = useState("");

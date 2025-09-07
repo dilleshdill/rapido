@@ -17,9 +17,7 @@ export default function BookingPage() {
 
   useEffect(() => {
     const socket = io("http://localhost:5000")
-    socket.on("rideConfirmed",ride => {
-        console.log("ride Confiremd successfully")
-    })
+    
   } )
 
 
