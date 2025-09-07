@@ -6,20 +6,21 @@ const socket = io("http://localhost:5000");
 export const DriverHome = () => {
   const [ride, setRide] = useState(null);
     const navigate = useNavigate();
-  useEffect(() => {
-    // Listen for new ride events
-    socket.on("newRide", (ride) => {
-        console.log("newRide is set",ride)
-      setRide(ride);
-    });
-    console.log("calling socket ")
-    socket.emit("driverId",4 ); // Example driver ID
 
-    // Cleanup listener on unmount
-    return () => {
-      socket.off("newRide");
-    };
-  }, []);
+    useEffect(() => {
+        
+        socket.emit("driverId",4 ); 
+        socket.on("newRide", (ride) => {
+            console.log("newRide is set",ride)
+        setRide(ride);
+        });
+        console.log("calling socket ")
+        
+        return () => {
+        socket.off("driverID")
+        socket.off("newRide");
+        };
+    }, []);
 
   return (
     <>

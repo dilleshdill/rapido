@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import {io} from "socket.io-client";
 import OSMMap from "../components/OSMMap";
 import axios from "axios";
-
-
 
 const BookingConfirmation = () => {
   const location = useLocation();
@@ -16,18 +13,7 @@ const BookingConfirmation = () => {
     getData()
   },[])
 
-
-  useEffect(() => {
-    const socket = io("http://localhost:5000");
-    socket.on("rideConfirmed", (rides) => {
-      setConfirm(rides);
-      console.log("rideConfirmed", rides);
-    });
-
-    return () => {
-      socket.off("rideConfirmed"); 
-    };
-  }, [confirm]);
+  
 
   const statusColors = {
     pending: "text-yellow-600 px-2 py-1 ",

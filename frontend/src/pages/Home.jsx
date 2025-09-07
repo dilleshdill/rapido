@@ -17,14 +17,22 @@ const Home = () => {
   const navigate = useNavigate();
 
 
-  useEffect(()=>{
-    const socket = io("http://localhost:5000")
+  useEffect(() => {
+    const socket = io("http://localhost:5000");
+    socket.emit("userId", 202);
+
     
-    socket.emit("userId",202);
-    return ()=>{
-      socket.off("userId");
-    }
-  },[])
+    socket.on("rideConfirmed", (ride) => {
+      console.log("Ride confirmed received:", ride);
+      
+    });
+  
+  
+  return () => {
+      socket.off("rideConfirmed");
+  };
+}, []);
+
   
   const fetchSuggestions = async (input) => {
     if (!input) {
