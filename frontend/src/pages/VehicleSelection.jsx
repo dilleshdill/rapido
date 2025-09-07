@@ -29,12 +29,12 @@ const VehicleSelection = () => {
       console.log("ride cancelled at the vechile seletion",rideId)
       setStaus("cancelled")
     })
-    socket.on("rideSuccess", (data) => {
-    console.log("rideSuccess received:", data);})
+    // socket.on("rideSuccess", (data) => {
+    // console.log("rideSuccess received:", data);})
     return () => {
       
       socket.off("rideCancel");
-      socket.off("rideSuccess");
+      // socket.off("rideSuccess");
       socket.disconnect();
     }
 

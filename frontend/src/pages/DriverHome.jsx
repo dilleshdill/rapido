@@ -6,7 +6,7 @@ const socket = io("http://localhost:5000");
 export const DriverHome = () => {
   const [ride, setRide] = useState(null);
     const navigate = useNavigate();
-
+    const [latAndLong, setLatAndLong] = useState({ lat: 0, lon: 0 });
     useEffect(() => {
         
         socket.emit("driverId",4 ); 
@@ -17,6 +17,18 @@ export const DriverHome = () => {
 
         socket.on("rideConfirmed",(ride) => {
         console.log("ride Confiremd successfully",ride)
+
+        socket.on("driverLocation",locationDetails =>{
+          console.log(locationDetails)
+          setLatAndLong({
+          lat:locationDetails.driver.lat,
+          lon:locationDetails.driver.lon,
+        });
+        console.log("dirverLocation socket",locationDetails.driver.lat,locationDetails.driver.lon)
+        })
+    return ()=>{
+      socket.off("driverLocation");
+    }
     })
         console.log("calling socket ")
         
