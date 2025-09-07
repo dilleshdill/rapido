@@ -35,9 +35,10 @@ const VehicleSelection = () => {
       
       socket.off("rideCancel");
       socket.off("rideSuccess");
+      socket.disconnect();
     }
 
-  })
+  },[])
   const [selected, setSelected] = useState("");
   const [pickup, setPickup] = useState("");
   const [drop, setDrop] = useState(null);
