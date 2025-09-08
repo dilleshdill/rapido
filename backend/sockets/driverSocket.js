@@ -133,13 +133,18 @@ const driverSocket = (io) => {
         let count  = 0 
         const pickupDropInterval = setInterval(async() => {
           if (count >= newRoutes.length){
-            io.to(socket.driverId.toString()).emit("ArrivedLocation",{
+            io.to(socket.driverId.toString()).emit("rideCompleted",{
               pickup: { lat: pickuplat, lon: pickuplon },
               drop  : {lat:droplat,lon:droplon}
             })
-            clearInterval(pickupDropInterval)
             await pool.query(
-              `UDPATE drivers_rides SET lat = $1 lng = $2 WHERE driver_id = $3`,[drop.lat,drop.lon] 
+              `UPDATE rides SET status = "success" WHERE id = $1`,[rideId]
+            )
+
+            clearInterval(pickupDropInterval)
+
+            await pool.query(
+              `UPDATE drivers_rides SET lat = $1,lng = $2,is_available=TRUE  WHERE driver_id = $3`,[drop.lat,drop.lon,socket.driverId] 
             )
 
             console.log("Driver Reached To Destination",drop.lat,drop.lon)
@@ -149,7 +154,7 @@ const driverSocket = (io) => {
           const newDriver = {lat:lat,lon:lon}
 
           io.to(socket.driverId).emit("driverLocation",{
-            pickup : {lat:newDriver,lon:newDriver},
+            driver : {lat:newDriver,lon:newDriver},
             drop : {lat:droplat,lon:droplon}
           })
 
