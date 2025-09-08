@@ -108,19 +108,58 @@ const driverSocket = (io) => {
           io.to(socket.driverId.toString()).emit("driverLocation", {
             driver,
             pickup: { lat: pickuplat, lon: pickuplon },
-            
           });
+
           io.to(rides.rows[0].user_id.toString()).emit("driverLocation", {
             driver,
             pickup: { lat: pickuplat, lon: pickuplon },
           });
 
-          
-          
+  
         }, 5000); 
 
-        
 
+
+        const newRoute = `http://router.project-osrm.org/route/v1/driving/${pickuplon},${pickuplat};${droplat},${droplon}?geometries=geojson`;
+        const newRes = await axios.get(newRoute)
+        if (!newRes.data.routes || res.data.routes.length===0){
+          console.log("No Route Found")
+          return
+        }
+        const newRoutes = newRes.data.routes[0].geometry.coordinates
+        console.log("new Rotues pickup to drop",newRoutes)
+        console.log("new Rotues pickup to drop" , newRes.data.routes[0])
+
+        let count  = 0 
+        const pickupDropInterval = setInterval(async() => {
+          if (count >= newRoutes.length){
+            io.to(socket.driverId.toString()).emit("ArrivedLocation",{
+              pickup: { lat: pickuplat, lon: pickuplon },
+              drop  : {lat:droplat,lon:droplon}
+            })
+            clearInterval(pickupDropInterval)
+            await pool.query(
+              `UDPATE drivers_rides SET lat = $1 lng = $2 WHERE driver_id = $3`,[drop.lat,drop.lon] 
+            )
+
+            console.log("Driver Reached To Destination",drop.lat,drop.lon)
+          }
+
+          let [lat,lon] = newRoutes[count]
+          const newDriver = {lat:lat,lon:lon}
+
+          io.to(socket.driverId).emit("driverLocation",{
+            pickup : {lat:newDriver,lon:newDriver},
+            drop : {lat:droplat,lon:droplon}
+          })
+
+          console.log(`Driver: ${driver.lat}, ${driver.lon}`);
+
+          count +=1
+
+        }, 5000);
+
+      
 
       } catch (err) {
         console.error("rideAccepted error:", err.message);
