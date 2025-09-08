@@ -64,33 +64,7 @@ const driverSocket = (io) => {
         console.log("Pickup:", pickuplat, pickuplon, "Driver start:", driver);
 
 
-        const newRoute = `http://router.project-osrm.org/route/v1/driving/${pickuplon},${pickuplat};${droplat},${droplon}?geometries=geojson`;
-        const newRes = await axios.get(newRoute)
-        if (!newRes.data.routes || res.data.routes.length===0){
-          console.log("No Route Found")
-          return
-        }
-        const newRoutes = newRes.data.routes[0].geometry.coordinates
-        console.log("new Rotues pickup to drop",newRoutes)
-        console.log("new Rotues pickup to drop" , newRes.data.routes[0])
-
-        let count  = 0 
-        const pichupDropInterval = setInterval(() => {
-          if (count >= newRoutes.length){
-            io.to(socket.driverId.toString()).emit("ArrivedLocation",{
-              pickup: {}
-              
-            })
-          }
-        }, 2000);
-
-
-
-
-
-
-
-
+  
 
         // ---------------- FETCH REAL ROUTE FROM OSRM ----------------
         const url = `http://router.project-osrm.org/route/v1/driving/${driver.lon},${driver.lat};${pickuplon},${pickuplat}?geometries=geojson`;
