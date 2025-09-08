@@ -37,7 +37,7 @@ const driverSocket = (io) => {
           return;
         }
 
-        // Update ride + driver availability
+        
         await pool.query(
           `UPDATE rides SET status = 'ongoing', driver_id = $1 WHERE id = $2`,
           [socket.driverId, rideId]
@@ -50,34 +50,75 @@ const driverSocket = (io) => {
         const newRides = await pool.query(`SELECT * FROM rides WHERE id = $1`, [rideId]);
         const driverData = await pool.query(`SELECT * FROM drivers_rides WHERE driver_id = $1`, [socket.driverId]);
 
-        // Notify both
+        
         io.to(rides.rows[0].user_id.toString()).emit("rideSuccess", newRides.rows[0]);
         io.to(socket.driverId.toString()).emit("rideConfirmed", newRides.rows[0]);
 
-        // Locations
+        
         let pickuplat = rides.rows[0].pickup_lat;
         let pickuplon = rides.rows[0].pickup_lon;
+        let droplat = rides.rows[0].drop_lat;
+        let droplon = rides.rows[0].drop_lon;
         let driver = { lat: driverData.rows[0].lat, lon: driverData.rows[0].lng };
 
         console.log("Pickup:", pickuplat, pickuplon, "Driver start:", driver);
+
+
+        const newRoute = `http://router.project-osrm.org/route/v1/driving/${pickuplon},${pickuplat};${droplat},${droplon}?geometries=geojson`;
+        const newRes = await axios.get(newRoute)
+        if (!newRes.data.routes || res.data.routes.length===0){
+          console.log("No Route Found")
+          return
+        }
+        const newRoutes = newRes.data.routes[0].geometry.coordinates
+        console.log("new Rotues pickup to drop",newRoutes)
+        console.log("new Rotues pickup to drop" , newRes.data.routes[0])
+
+        let count  = 0 
+        const pichupDropInterval = setInterval(() => {
+          if (count >= newRoutes.length){
+            io.to(socket.driverId.toString()).emit("ArrivedLocation",{
+              pickup: {}
+              
+            })
+          }
+        }, 2000);
+
+
+
+
+
+
+
+
 
         // ---------------- FETCH REAL ROUTE FROM OSRM ----------------
         const url = `http://router.project-osrm.org/route/v1/driving/${driver.lon},${driver.lat};${pickuplon},${pickuplat}?geometries=geojson`;
         const res = await axios.get(url);
         if (!res.data.routes || res.data.routes.length === 0) {
-          console.error("❌ No route found");
+          console.error("No route found");
           return;
         }
-        const routeCoords = res.data.routes[0].geometry.coordinates; // [lon, lat]
+        const routeCoords = res.data.routes[0].geometry.coordinates; 
+
+        
 
         // ---------------- SIMULATE DRIVER MOVEMENT ----------------
         let step = 0;
         const interval = setInterval(async () => {
           if (step >= routeCoords.length) {
             clearInterval(interval);
+
+            await pool.query(
+            `UPDATE drivers_rides SET lat = $1, lng = $2 WHERE driver_id = $3`,
+            [driver.lat, driver.lon, socket.driverId]
+          );
+
             io.to(socket.driverId.toString()).emit("driverArrived", {
-              driver,
+              
               pickup: { lat: pickuplat, lon: pickuplon },
+              drop  : {lat:droplat,lon:droplon}
+
             });
             console.log("✅ Driver arrived at pickup location!");
             return;
@@ -89,22 +130,23 @@ const driverSocket = (io) => {
 
           console.log(`Driver: ${driver.lat}, ${driver.lon}`);
 
-          // Send live updates
+          
           io.to(socket.driverId.toString()).emit("driverLocation", {
             driver,
             pickup: { lat: pickuplat, lon: pickuplon },
+            
           });
           io.to(rides.rows[0].user_id.toString()).emit("driverLocation", {
             driver,
             pickup: { lat: pickuplat, lon: pickuplon },
           });
 
-          // Update DB
-          await pool.query(
-            `UPDATE drivers_rides SET lat = $1, lng = $2 WHERE driver_id = $3`,
-            [driver.lat, driver.lon, socket.driverId]
-          );
-        }, 2000); // every 2 seconds
+          
+          
+        }, 5000); 
+
+        
+
 
       } catch (err) {
         console.error("rideAccepted error:", err.message);
@@ -113,11 +155,8 @@ const driverSocket = (io) => {
 
     // ---------------- RIDE DECLINED ----------------
     socket.on("rideDeclined", async (rideId) => {
-      console.log("❌ Ride Cancelled By User ", rideId);
-      await pool.query(
-        `UPDATE rides SET status = 'cancelled' WHERE id = $1`,
-        [rideId]
-      );
+      console.log("Ride Cancelled By User ", rideId);
+      
       if (socket.driverId) {
         await pool.query(
           `UPDATE drivers_rides SET is_available = TRUE WHERE driver_id = $1`,
@@ -130,11 +169,11 @@ const driverSocket = (io) => {
     socket.on("disconnect", () => {
       if (socket.userId) {
         connectedUsers.delete(socket.userId);
-        console.log(`❌ User disconnected: ${socket.userId}, Socket ID: ${socket.id}`);
+        console.log(`User disconnected: ${socket.userId}, Socket ID: ${socket.id}`);
       }
       if (socket.driverId) {
         connectedDrivers.delete(socket.driverId);
-        console.log(`❌ Driver disconnected: ${socket.driverId}, Socket ID: ${socket.id}`);
+        console.log(`Driver disconnected: ${socket.driverId}, Socket ID: ${socket.id}`);
       }
     });
   });
