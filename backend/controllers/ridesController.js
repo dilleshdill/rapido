@@ -50,7 +50,7 @@ const createRide = async (req, res) => {
             io.to(ride.user_id.toString()).emit("rideCancel", ride.id);
             return;
         }
-
+        
         const driver = data.rows[index];
 
         io.to(driver.driver_id.toString()).emit("newRide", {

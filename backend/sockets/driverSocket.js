@@ -32,6 +32,7 @@ const driverSocket = (io) => {
 
       try {
         const rides = await pool.query(`SELECT * FROM rides WHERE id = $1`, [rideId]);
+        console.log(rides.rows[0],)
         if (rides.rows.length === 0 || rides.rows[0].status !== "pending") {
           io.to(`driver_${socket.driverId}`).emit("rideUnavailable", rideId);
           return;
@@ -42,14 +43,18 @@ const driverSocket = (io) => {
           [socket.driverId, rideId]
         );
 
-        const driverData = await pool.query(`SELECT * FROM drivers_rides WHERE driver_id = $1`,[socket.driverId])
 
-  
+        const driverData = await pool.query(`SELECT * FROM drivers_rides WHERE driver_id = $1`,[socket.driverId])
+        console.log(rides.rows[0].user_id)
+        io.to(rides.rows[0].user_id).emit("rideSuccess",rides.rows[0])
         io.to(socket.driverId.toString()).emit("rideConfirmed", rides.rows[0]);
+        
         
         let pickuplat = rides.rows[0].pickup_lat;
         let pickuplon = rides.rows[0].pickup_lon;
         console.log(pickuplat, pickuplon);
+
+
 
         let driver = { lat: driverData.rows[0].lat, lon: driverData.rows[0].lng };
 
@@ -109,7 +114,7 @@ const driverSocket = (io) => {
             });
             console.log("✅ Driver has arrived at pickup location!");
           }
-        }, 2000);
+        }, 3000);
 
 
 
