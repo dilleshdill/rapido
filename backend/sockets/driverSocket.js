@@ -119,13 +119,14 @@ const driverSocket = (io) => {
         }, 5000); 
 
 
-
         const newRoute = `http://router.project-osrm.org/route/v1/driving/${pickuplon},${pickuplat};${droplat},${droplon}?geometries=geojson`;
         const newRes = await axios.get(newRoute)
+
         if (!newRes.data.routes || res.data.routes.length===0){
           console.log("No Route Found")
           return
         }
+
         const newRoutes = newRes.data.routes[0].geometry.coordinates
         console.log("new Rotues pickup to drop",newRoutes)
         console.log("new Rotues pickup to drop" , newRes.data.routes[0])
@@ -138,13 +139,14 @@ const driverSocket = (io) => {
               drop  : {lat:droplat,lon:droplon}
             })
             await pool.query(
-              `UPDATE rides SET status = "success" WHERE id = $1`,[rideId]
+              `UPDATE rides SET status = 'success' WHERE id = $1`,[rideId]
             )
 
             clearInterval(pickupDropInterval)
 
-            await pool.query(
-              `UPDATE drivers_rides SET lat = $1,lng = $2,is_available=TRUE  WHERE driver_id = $3`,[drop.lat,drop.lon,socket.driverId] 
+           await pool.query(
+              `UPDATE drivers_rides SET lat = $1,lng = $2,is_available=TRUE  WHERE driver_id = $3`,
+              [drop.lat, drop.lon, socket.driverId] 
             )
 
             console.log("Driver Reached To Destination",drop.lat,drop.lon)
@@ -152,10 +154,10 @@ const driverSocket = (io) => {
 
           let [lat,lon] = newRoutes[count]
           const newDriver = {lat:lat,lon:lon}
-
-          io.to(socket.driverId).emit("driverLocation",{
-            driver : {lat:newDriver,lon:newDriver},
-            drop : {lat:droplat,lon:droplon}
+          console.log(newDriver)
+          io.to(socket.driverId).emit("driverLocation", {
+            driver: newDriver,
+            drop: {lat: droplat, lon: droplon}
           })
 
           console.log(`Driver: ${driver.lat}, ${driver.lon}`);
