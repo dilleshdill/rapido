@@ -159,8 +159,6 @@ const driverSocket = (io) => {
 
         }, 5000);
 
-      
-
       } catch (err) {
         console.error("rideAccepted error:", err.message);
       }
