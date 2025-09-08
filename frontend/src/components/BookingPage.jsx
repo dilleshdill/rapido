@@ -2,7 +2,7 @@ import { useState } from "react";
 import PickPoints from "./PickPoints";
 import OSMMap from "./OSMMap";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { UNSAFE_LocationContext, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 
@@ -14,7 +14,8 @@ export default function BookingPage() {
   const location = useLocation();
   const rideDetails = location.state?.rideDetails;
 
-  
+  const locationDetails = localStorage.getItem("driverLocations");
+  console.log("locationDetails in Booking page",locationDetails)
   
 
   const handleCalculateFare = async () => {

@@ -2,9 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import OSMMap from "../components/OSMMap";
 import axios from "axios";
-import {io} from 'socket.io-client'
-
-const socket = io('http://localhost:5000')
 const BookingConfirmation = () => {
   const location = useLocation();
   const navigate = useNavigate();

@@ -211,7 +211,7 @@
         )}
             
           <div className="flex flex-col md:flex-row gap-3 justify-between">
-                        <button
+            <button
               onClick={() => {
                 getRide({ pickup: selectedLocation, drop: dropValue ,distance:distance});
                 setShowEstimation(!showEstimation);   // show map & distance after clicking

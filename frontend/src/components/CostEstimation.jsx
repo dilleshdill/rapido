@@ -38,6 +38,7 @@ const CostEstimation = ({getCost}) => {
     try {
       const url = `https://router.project-osrm.org/route/v1/driving/${loc1.lon},${loc1.lat};${loc2.lon},${loc2.lat}?overview=full&geometries=geojson&alternatives=false&steps=true&annotations=true`;
       const res = await axios.get(url);
+      
       const routeData = res.data.routes[0];
       const coords = routeData.geometry.coordinates.map((c) => [c[1], c[0]]);
       setRoute(coords);
