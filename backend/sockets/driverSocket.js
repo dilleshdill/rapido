@@ -42,10 +42,11 @@ const driverSocket = (io) => {
       `UPDATE rides SET status = 'ongoing', driver_id = $1 WHERE id = $2`,
       [socket.driverId, rideId]
     );
-    await pool.query(
-      `UPDATE drivers_rides SET is_available = FALSE WHERE driver_id = $1`,
-      [socket.driverId]
-    );
+    
+    // await pool.query(
+    //   `UPDATE drivers_rides SET is_available = FALSE WHERE driver_id = $1`,
+    //   [socket.driverId]
+    // );
 
     const newRides = await pool.query(`SELECT * FROM rides WHERE id = $1`, [rideId]);
     const driverData = await pool.query(`SELECT * FROM drivers_rides WHERE driver_id = $1`, [socket.driverId]);
