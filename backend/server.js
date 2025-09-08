@@ -91,8 +91,10 @@ app.get("/api/route", async (req, res) => {
   try {
     const url = `https://router.project-osrm.org/route/v1/driving/${pickupLon},${pickupLat};${dropLon},${dropLat}?overview=full&geometries=geojson&steps=true&annotations=true`;
     const response = await axios.get(url);
+    console.log("Every thing isokey")
     res.json(response.data);
   } catch (err) {
+    console.log("not working ")
     res.status(500).json({ error: err.message });
   }
 });
