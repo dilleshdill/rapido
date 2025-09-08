@@ -167,7 +167,7 @@ const Home = () => {
   };
 
   // Render suggestion list
-  const renderSuggestions = (list, setValue, setList) => (
+  const renderPickupSuggestions = (list, setValue, setList) => (
     <ul className="border border-gray-300 rounded-lg p-2 max-h-48 overflow-y-auto bg-white absolute w-full z-10">
       {list.map((s, idx) => (
         <li
@@ -175,6 +175,27 @@ const Home = () => {
           className="p-2 hover:bg-gray-100 cursor-pointer"
           onClick={() => {
             setValue(s.display_name);
+            localStorage.setItem("pickupAddress",s.display_name)
+
+            setList([]);
+          }}
+        >
+          {s.display_name}
+        </li>
+      ))}
+    </ul>
+  );
+
+    // Render suggestion list
+  const renderDropSuggestions = (list, setValue, setList) => (
+    <ul className="border border-gray-300 rounded-lg p-2 max-h-48 overflow-y-auto bg-white absolute w-full z-10">
+      {list.map((s, idx) => (
+        <li
+          key={idx}
+          className="p-2 hover:bg-gray-100 cursor-pointer"
+          onClick={() => {
+            setValue(s.display_name);
+            localStorage.setItem("dropAddress",s.display_name)
             setList([]);
           }}
         >
@@ -214,7 +235,7 @@ const Home = () => {
               />
             </div>
             {suggestions.length > 0 &&
-              renderSuggestions(suggestions, setSelectedLocation, setSuggestions)}
+              renderPickupSuggestions(suggestions, setSelectedLocation, setSuggestions)}
           </div>
 
           {/* Drop */}
@@ -235,7 +256,7 @@ const Home = () => {
               />
             </div>
             {dropSuggestions.length > 0 &&
-              renderSuggestions(dropSuggestions, setDropValue, setDropSuggestions)}
+              renderDropSuggestions(dropSuggestions, setDropValue, setDropSuggestions)}
           </div>
 
           <button

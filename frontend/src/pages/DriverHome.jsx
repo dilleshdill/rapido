@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import DriverMap from "../components/DriverMap";
-
+import { useNavigate } from "react-router-dom";
 const socket = io("http://localhost:5000");
 
 const DriverHome = () => {
@@ -12,6 +12,8 @@ const DriverHome = () => {
   const [showRide, setShowRide] = useState(false);
   const [rideData, setRideData] = useState(null);
   const timer = localStorage.getItem('timer')
+
+  const navigate = useNavigate()
   const [driverArrivedData,setDriverArrivedData] = useState(null)
   useEffect(() => {
     // Load any stored ride data (for refresh)
@@ -51,6 +53,11 @@ const DriverHome = () => {
           lon: rideData.drop.lon,
         });
       alert('Driver Arrived');
+    })
+
+    socket.on("rideCompleted",(rideData) =>{
+      alert("rideCompleted");
+      navigate('/payment-page');
     })
 
     // Driver location updates
