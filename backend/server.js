@@ -88,14 +88,15 @@ app.post("/api/payment/verify-payment", (req, res) => {
 
 app.get("/api/route", async (req, res) => {
   const { pickupLat, pickupLon, dropLat, dropLon } = req.query;
+  const url = `https://router.project-osrm.org/route/v1/driving/${pickupLon},${pickupLat};${dropLon},${dropLat}?overview=full&geometries=geojson&alternatives=false&steps=true&annotations=true`;
+
   try {
-    const url = `https://router.project-osrm.org/route/v1/driving/${pickupLon},${pickupLat};${dropLon},${dropLat}?overview=full&geometries=geojson&steps=true&annotations=true`;
     const response = await axios.get(url);
-    console.log("Every thing isokey")
-    res.json(response.data);
+    console.log("everything is correct")
+    res.json(response.data); 
   } catch (err) {
-    console.log("not working ")
-    res.status(500).json({ error: err.message });
+    console.error("Backend route error:", err.message);
+    res.status(500).json({ error: "Failed to fetch route" });
   }
 });
 
