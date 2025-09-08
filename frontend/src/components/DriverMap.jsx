@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  Polyline,
+  useMap,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import L from "leaflet";
@@ -18,9 +25,40 @@ const FitBounds = ({ route }) => {
 };
 
 const DriverMap = ({ driverLatLng, pickup }) => {
+  const [rideData, setRideData] = useState(null);
   const [route, setRoute] = useState([]);
   const [distance, setDistance] = useState(null);
   const [duration, setDuration] = useState(null);
+
+  // Load ride data from localStorage only once
+  useEffect(() => {
+    const rideDataStr = localStorage.getItem("rideConfirmed");
+    if (rideDataStr) {
+      setRideData(JSON.parse(rideDataStr));
+    }
+  }, []);
+
+  // Vehicle icons
+  const vehicleIcons = {
+    cab: new L.Icon({
+      iconUrl:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSg88nqLNzD8tp2IxGV0POw_PZW_YaoBwWypA&s", // taxi icon
+      iconSize: [40, 30],
+      iconAnchor: [20, 40],
+    }),
+    bike: new L.Icon({
+      iconUrl:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTw91j2ZcJAb2ghW5sY8IDd-0oFUJgoJEM66A&s", // bike icon
+      iconSize: [40, 30],
+      iconAnchor: [20, 40],
+    }),
+    auto: new L.Icon({
+      iconUrl:
+        "https://cdn.imgbin.com/3/22/12/imgbin-computer-icons-auto-rickshaw-khaki-dphgdKsPF84Hqf8fzcbHpHK0u.jpg", // (replace with auto rickshaw icon)
+      iconSize: [40, 30],
+      iconAnchor: [20, 40],
+    }),
+  };
 
   // Fetch route whenever driver or pickup changes
   useEffect(() => {
@@ -38,13 +76,14 @@ const DriverMap = ({ driverLatLng, pickup }) => {
       setRoute(coords);
       setDistance(routeData.distance / 1000); // km
       setDuration(routeData.duration / 60); // minutes
+      localStorage.setItem('timer',(routeData.duration / 60));
     } catch (err) {
       console.error("Route error:", err);
     }
   };
 
   return (
-    <div className="h-1/2 md:h-full w-full md:w-1/2">
+    <div className="h-1/2 md:h-full w-screen ">
       {/* Distance & Time Info */}
       {distance && duration && (
         <div
@@ -75,21 +114,27 @@ const DriverMap = ({ driverLatLng, pickup }) => {
             : defaultCenter
         }
         zoom={10}
-        style={{ height: "100vh", width: "50vw" }}
+        style={{ height: "100vh", width: "63vw" }}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-        {/* Driver Marker */}
-        {driverLatLng && (
-          <Marker position={[driverLatLng.lat, driverLatLng.lon]}>
-            <Popup>Driver Location</Popup>
+        {/* Driver Vehicle Marker */}
+        {driverLatLng && rideData && (
+          <Marker
+            position={[driverLatLng.lat, driverLatLng.lon]}
+            icon={vehicleIcons[rideData.vehicle] || vehicleIcons.cab}
+          >
+            <Popup>
+              Driver ({rideData.vehicle?.charAt(0).toUpperCase() +
+                rideData.vehicle?.slice(1)})
+            </Popup>
           </Marker>
         )}
 
         {/* Pickup Marker */}
         {pickup && (
           <Marker position={[pickup.lat, pickup.lon]}>
-            <Popup>Pickup</Popup>
+            <Popup>Pickup / Destination</Popup>
           </Marker>
         )}
 

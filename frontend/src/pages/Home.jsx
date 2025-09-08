@@ -2,6 +2,65 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { io } from "socket.io-client";
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+
+const markerIcon = new L.Icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+  iconSize: [35, 35],
+  iconAnchor: [17, 35],
+});
+
+const LocationPicker = ({ onSelect, onClose }) => {
+  const [position, setPosition] = useState(null);
+
+  const LocationMarker = () => {
+    useMapEvents({
+      click(e) {
+        setPosition(e.latlng);
+        fetchAddress(e.latlng.lat, e.latlng.lng);
+      },
+    });
+
+    return position ? <Marker position={position} icon={markerIcon} /> : null;
+  };
+
+  // Get address from lat/lon (reverse geocode)
+  const fetchAddress = async (lat, lon) => {
+    try {
+      const res = await axios.get("https://nominatim.openstreetmap.org/reverse", {
+        params: { lat, lon, format: "json" },
+      });
+      if (res.data && res.data.display_name) {
+        onSelect(res.data.display_name, { lat, lon });
+      }
+    } catch (err) {
+      console.error("Reverse geocode error:", err);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-lg w-[90%] h-[80%] relative">
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded"
+        >
+          Close
+        </button>
+        <MapContainer
+          center={[20.5937, 78.9629]}
+          zoom={5}
+          style={{ height: "100%", width: "100%" }}
+        >
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <LocationMarker />
+        </MapContainer>
+      </div>
+    </div>
+  );
+};
 
 const Home = () => {
   const navigate = useNavigate();
@@ -9,6 +68,7 @@ const Home = () => {
   const [dropValue, setDropValue] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [dropSuggestions, setDropSuggestions] = useState([]);
+  const [showMap, setShowMap] = useState(null); // "pickup" | "drop" | null
 
   // Socket for ride success (optional)
   useEffect(() => {
@@ -23,7 +83,8 @@ const Home = () => {
   // Debounced pickup suggestions
   useEffect(() => {
     const handler = setTimeout(() => {
-      if (selectedLocation.length >= 3) fetchSuggestions(selectedLocation, setSuggestions);
+      if (selectedLocation.length >= 3)
+        fetchSuggestions(selectedLocation, setSuggestions);
     }, 300);
     return () => clearTimeout(handler);
   }, [selectedLocation]);
@@ -31,7 +92,8 @@ const Home = () => {
   // Debounced drop suggestions
   useEffect(() => {
     const handler = setTimeout(() => {
-      if (dropValue.length >= 3) fetchSuggestions(dropValue, setDropSuggestions);
+      if (dropValue.length >= 3)
+        fetchSuggestions(dropValue, setDropSuggestions);
     }, 300);
     return () => clearTimeout(handler);
   }, [dropValue]);
@@ -45,8 +107,8 @@ const Home = () => {
           format: "json",
           addressdetails: 1,
           limit: 5,
-          countrycodes: "IN"
-        }
+          countrycodes: "IN",
+        },
       });
       setList(response.data || []);
     } catch (err) {
@@ -75,18 +137,17 @@ const Home = () => {
   };
 
   const getLocationFromUser = async () => {
-    const loc1 = await getCoordinates(selectedLocation);    
+    const loc1 = await getCoordinates(selectedLocation);
     const loc2 = await getCoordinates(dropValue);
-    console.log(loc1,loc2,selectedLocation,dropValue)
     if (loc1 && loc2) {
       try {
         const res = await axios.post("http://localhost:5000/check/locations", {
           pickup: selectedLocation,
           drop: dropValue,
           loc1,
-          loc2
+          loc2,
         });
-        if (res.status === 200){
+        if (res.status === 200) {
           localStorage.setItem("pickup-lat", loc1.lat);
           localStorage.setItem("pickup-lon", loc1.lon);
           localStorage.setItem("drop-lat", loc2.lat);
@@ -138,7 +199,12 @@ const Home = () => {
           {/* Pickup */}
           <div className="relative">
             <div className="flex items-center gap-3 border border-gray-300 rounded-lg p-3">
-              <span className="text-black text-lg">📍</span>
+              <span
+                className="text-black text-lg cursor-pointer"
+                onClick={() => setShowMap("pickup")}
+              >
+                📍
+              </span>
               <input
                 type="text"
                 value={selectedLocation}
@@ -154,7 +220,12 @@ const Home = () => {
           {/* Drop */}
           <div className="relative">
             <div className="flex items-center gap-3 border border-gray-300 rounded-lg p-3">
-              <span className="text-black text-lg">🛑</span>
+              <span
+                className="text-black text-lg cursor-pointer"
+                onClick={() => setShowMap("drop")}
+              >
+                🛑
+              </span>
               <input
                 type="text"
                 value={dropValue}
@@ -169,12 +240,31 @@ const Home = () => {
 
           <button
             onClick={getLocationFromUser}
-            className="mt-4 w-full bg-yellow-400 text-black font-bold py-3 rounded-lg hover:bg-yellow-500 transition"
+            className="mt-4 w-full !bg-yellow-400 text-black font-bold py-3 rounded-lg hover:bg-yellow-500 transition"
           >
             Book Ride
           </button>
         </div>
       </section>
+
+      {/* Map Picker Modal */}
+      {showMap && (
+        <LocationPicker
+          onSelect={(address, coords) => {
+            if (showMap === "pickup") {
+              setSelectedLocation(address);
+              localStorage.setItem("pickup-lat", coords.lat);
+              localStorage.setItem("pickup-lon", coords.lon);
+            } else {
+              setDropValue(address);
+              localStorage.setItem("drop-lat", coords.lat);
+              localStorage.setItem("drop-lon", coords.lon);
+            }
+            setShowMap(null);
+          }}
+          onClose={() => setShowMap(null)}
+        />
+      )}
     </div>
   );
 };
