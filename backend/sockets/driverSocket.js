@@ -42,7 +42,7 @@ const driverSocket = (io) => {
       `UPDATE rides SET status = 'ongoing', driver_id = $1 WHERE id = $2`,
       [socket.driverId, rideId]
     );
-    
+
     // await pool.query(
     //   `UPDATE drivers_rides SET is_available = FALSE WHERE driver_id = $1`,
     //   [socket.driverId]
@@ -108,6 +108,8 @@ const driverSocket = (io) => {
       console.log(`Driver to Pickup: ${driver.lat}, ${driver.lon}`);
     }, 5000);
 
+
+
     // ---------------- FETCH ROUTE PICKUP → DROP ----------------
     const newRoute = `http://router.project-osrm.org/route/v1/driving/${pickuplon},${pickuplat};${droplat},${droplon}?geometries=geojson`;
     const newRes = await axios.get(newRoute);
@@ -122,6 +124,7 @@ const driverSocket = (io) => {
     // ---------------- SIMULATE DRIVER MOVEMENT TO DROP ----------------
     let count = 0;
     const pickupDropInterval = setInterval(async () => {
+
       if (count >= newRoutes.length) {
         io.to(socket.driverId.toString()).emit("rideCompleted", {
           pickup: { lat: pickuplat, lon: pickuplon },
@@ -134,7 +137,7 @@ const driverSocket = (io) => {
         );
 
         await pool.query(
-          `UPDATE drivers_rides SET lat = $1, lng = $2, is_available=TRUE WHERE driver_id = $3`,
+          `UPDATE drivers_rides SET lat = $1, lng = $2 WHERE driver_id = $3`,
           [drop.lat, drop.lon, socket.driverId]
         );
 
@@ -145,17 +148,15 @@ const driverSocket = (io) => {
 
       const [lon, lat] = newRoutes[count];
       driver = { lat, lon };
-
+      
       io.to(socket.driverId.toString()).emit("driverLocation", {
         driver,
         drop: drop
       });
 
-      
-
       console.log(`Driver to Drop: ${driver.lat}, ${driver.lon}`);
       count++;
-    }, 5000);
+    }, 1000);
 
     // ---------------- CLEAR INTERVALS ON DISCONNECT ----------------
     
