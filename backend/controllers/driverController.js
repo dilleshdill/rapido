@@ -73,7 +73,7 @@ const driverRides = async(req,res) => {
     return res.status(404).json({message:"Driver Not Foudn"})
   }
 
-  res.status(200).json({data:data.rows[0]})
+  res.status(200).json({data:data.rows})
 
 }
 
