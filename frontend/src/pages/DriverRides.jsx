@@ -14,13 +14,14 @@ const navigate = useNavigate()
     try {
       const response = await axios.get("http://localhost:5000/driver/all-rides", {
         headers: {
-          Authorization: `Bearer ${Cookies.get("DriverToken")}`,
+          Authorization: `Bearer ${Cookies.get("authToken")}`,
         },
       });
 
       console.log("Rides fetched:", response.data);
       if (response.status === 200) {
         setTotalRides(response.data);
+        console.log(response.data)
       }
     } catch (error) {
       console.error("Error fetching rides:", error);

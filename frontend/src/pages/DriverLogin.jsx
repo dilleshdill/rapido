@@ -54,6 +54,7 @@ const DriverLogin = () => {
 
       if (res.status === 200) {
         Cookies.set("authToken", res.data.token, { expires: 7 });
+        console.log("DriverTocken",localStorage.getItem("authTocken"))
         alert("Login Successful ✅");
         navigate('/driver-home');
 
