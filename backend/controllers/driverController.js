@@ -66,7 +66,7 @@ const driverRides = async(req,res) => {
   const data = await pool.query(
     `SELECT * FROM rides WHERE driver_id = $1`,[id]
   )
-  console.log("rides data",data.rows[0])
+  console.log("rides data",data.rows)
 
 
   if (!data){
