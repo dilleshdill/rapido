@@ -32,14 +32,12 @@ app.use("/check",checkCordinates)
 app.use("/upload", uploadRoutes);
 app.use("/rides",ridesRoute)
 
-// Razorpay Setup
 const razorpay = new Razorpay({
   key_id: 'rzp_test_VokWRKJcLaw2Fy'
 ,
   key_secret: 'lY9F0jnzhLsn721LHkRqPg8f',
 });
 
-// Create Razorpay Order
 app.post("/api/payment/create-order", async (req, res) => {
   try {
     const { amount, currency, receipt } = req.body;
@@ -61,7 +59,7 @@ app.post("/api/payment/create-order", async (req, res) => {
   }
 });
 
-// Verify Razorpay Payment
+
 app.post("/api/payment/verify-payment", (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
@@ -83,20 +81,6 @@ app.post("/api/payment/verify-payment", (req, res) => {
   } catch (error) {
     console.error("Payment verification error:", error.message);
     return res.status(500).send("Server error");
-  }
-});
-
-app.get("/api/route", async (req, res) => {
-  const { pickupLat, pickupLon, dropLat, dropLon } = req.query;
-  const url = `https://router.project-osrm.org/route/v1/driving/${pickupLon},${pickupLat};${dropLon},${dropLat}?overview=full&geometries=geojson&alternatives=false&steps=true&annotations=true`;
-
-  try {
-    const response = await axios.get(url);
-    console.log("everything is correct")
-    res.json(response.data); 
-  } catch (err) {
-    console.error("Backend route error:", err.message);
-    res.status(500).json({ error: "Failed to fetch route" });
   }
 });
 

@@ -89,7 +89,7 @@ const driverSocket = (io) => {
           drop: drop
         });
         console.log("✅ Driver arrived at pickup location!");
-        return;
+
       }
 
       const [lon, lat] = routeCoords[step];
