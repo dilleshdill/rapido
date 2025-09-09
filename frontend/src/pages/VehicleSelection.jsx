@@ -6,14 +6,17 @@ import PickPoints from "../components/PickPoints";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { io } from "socket.io-client";
+import Loader from "../components/Loader";
+
+
+
+
 const vehicles = [
   { id: "bike", label: "Bike", image: bike1,cost:5 },
   { id: "auto", label: "Auto", image: auto,cost:10 },
   { id: "cab", label: "Cab", image: cab,cost:15 },
 ];
-import { io } from "socket.io-client";
-
-
 const VehicleSelection = () => {
 
   const [status,setStaus] = useState("");
@@ -44,6 +47,7 @@ const VehicleSelection = () => {
   const [drop, setDrop] = useState(null);
   const [distance, setDistance] = useState(null);
   const [isShow, setIsShow] = useState(false);
+  const [rideClick,setRideClick] = useState(false)
 
   const navigate = useNavigate();
 
@@ -56,6 +60,7 @@ const VehicleSelection = () => {
       setDistance(dist.distance);
       setIsShow(true);
       console.log("Distance in vehicle selection:", dist.distance);
+      setRideClick(true)
     }
     // You can add logic here to calculate distance or fetch route details
   }
@@ -99,8 +104,8 @@ const VehicleSelection = () => {
   return (
     <div className="flex flex-col w-screen top-0 bg-gray-100 p-0 m-0">
       <PickPoints getRide={getDistance}/>
-      
-      {isShow && <div className="bg-white mt-5 p-5 rounded-2xl shadow-lg md:w-full w-[350px]">
+      {distance == null && rideClick && <Loader/>}
+      {isShow && distance !== null && <div className="bg-white mt-5 p-5 rounded-2xl shadow-lg md:w-full w-[350px]">
         <h2 className="text-xl font-semibold mb-6">Select Service</h2>
         <div className="grid gap-4">
           {vehicles.map((v) => (

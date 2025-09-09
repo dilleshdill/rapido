@@ -58,10 +58,6 @@ const Payment = () => {
 
             if (verification.data.status === "Payment verified") {
               showToast("Payment Successful!","success");
-              // Add Items to Orders & Clear Favorites
-              await addToOrders();
-              await clearFavorites();
-
               // Navigate to Success Page
               navigate("/payment-success");
             } else {

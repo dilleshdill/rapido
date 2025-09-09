@@ -36,6 +36,7 @@ const BookingConfirmation = () => {
     );
     if (res.status === 200) {
       setConfirm(res.data);
+      localStorage.setItem('price',res.data.amount)
       console.log("Ride response:", res.data);
     }
   } catch (e) {
