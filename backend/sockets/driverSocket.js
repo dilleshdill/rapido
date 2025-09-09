@@ -47,14 +47,12 @@ socket.on("rideAccepted", async (rideId) => {
       [socket.driverId, rideId]
     );
 
-<<<<<<< HEAD
-=======
+
     // await pool.query(
     //   `UPDATE drivers_rides SET is_available = FALSE WHERE driver_id = $1`,
     //   [socket.driverId]
     // );
-    
->>>>>>> dde0f0e08697575dd68a5ad715fdbdc69aaf0d48
+
     const newRides = await pool.query(`SELECT * FROM rides WHERE id = $1`, [rideId]);
     const driverData = await pool.query(`SELECT * FROM drivers_rides WHERE driver_id = $1`, [socket.driverId]);
 
