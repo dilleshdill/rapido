@@ -55,16 +55,25 @@ const driverLogin = async (req, res) => {
 };
 
 const driverRides = async(req,res) => {
-  const {id,email} = req.user
+  
+  const {email} = req.user
+  console.log("driver Rides",email)
   const rides = await pool.query(
-    `SELECT * FROM rides WHERE driver_id = $1`,[id]
+    `SELECT * FROM drivers WHERE email = $1`,[email]
   )
 
-  if (!rides){
+  const id = rides.rows[0].driver_id
+  const data = await pool.query(
+    `SELECT * FROM rides WHERE driver_id = $1`,[id]
+  )
+  console.log("rides data",data.rows[0])
+
+
+  if (!data){
     return res.status(404).json({message:"Driver Not Foudn"})
   }
 
-  res.status(200).json({data:rides.rows[0]})
+  res.status(200).json({data:data.rows[0]})
 
 }
 

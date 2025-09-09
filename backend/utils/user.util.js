@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 const generateUserToken = (res, user) => {
- 
+  
   if (user) {
     const payload = {
       id: user.id,
