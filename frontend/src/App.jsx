@@ -14,6 +14,9 @@ import AllRides from './pages/AllRides';
 import  DriverHome  from './pages/DriverHome';
 import BookingPage from './components/BookingPage';
 import PickupToDestination from './components/PickupToDestination'
+import Payment from './pages/Payment'
+import PaymentSuccess from './pages/PaymentSuccess';
+import DriverRides from './pages/DriverRides';
 
 const App = () => {
   return(
@@ -32,6 +35,9 @@ const App = () => {
         <Route exact path="/driver-home" element={<DriverHome />} />
         <Route exact path="/booking-ride/:id" element={<BookingPage />} />
         <Route exact path="/wayto-destination" element={<PickupToDestination />} />
+        <Route exact path="/payment-page" element={<Payment />} />
+        <Route exact path="/payment-success" element={<PaymentSuccess />} />
+        <Route exact path="/driver-rides" element={<DriverRides />} />
       </Routes>
     </BrowserRouter>
   )

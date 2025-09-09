@@ -27,7 +27,11 @@ const driverSocket = (io) => {
     });
 
     // ---------------- RIDE ACCEPTED ----------------
-   socket.on("rideAccepted", async (rideId) => {
+
+// Interval Function
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+socket.on("rideAccepted", async (rideId) => {
   if (!socket.driverId) return;
 
   try {
@@ -42,11 +46,6 @@ const driverSocket = (io) => {
       `UPDATE rides SET status = 'ongoing', driver_id = $1 WHERE id = $2`,
       [socket.driverId, rideId]
     );
-
-    // await pool.query(
-    //   `UPDATE drivers_rides SET is_available = FALSE WHERE driver_id = $1`,
-    //   [socket.driverId]
-    // );
 
     const newRides = await pool.query(`SELECT * FROM rides WHERE id = $1`, [rideId]);
     const driverData = await pool.query(`SELECT * FROM drivers_rides WHERE driver_id = $1`, [socket.driverId]);
@@ -66,35 +65,27 @@ const driverSocket = (io) => {
 
     // ---------------- FETCH ROUTE DRIVER → PICKUP ----------------
     const url = `http://router.project-osrm.org/route/v1/driving/${driver.lon},${driver.lat};${pickuplon},${pickuplat}?geometries=geojson`;
+    console.log("Fetching OSRM URL:", url);
+
     const res = await axios.get(url);
     if (!res.data.routes || res.data.routes.length === 0) {
-      console.error("No route found to pickup");
+      console.error("❌ No route found to pickup, aborting simulation");
       return;
     }
+
     const routeCoords = res.data.routes[0].geometry.coordinates;
+    if (!routeCoords || routeCoords.length === 0) {
+      console.error("❌ Empty routeCoords to pickup");
+      return;
+    }
 
-    // ---------------- SIMULATE DRIVER MOVEMENT TO PICKUP ----------------
-    let step = 0;
-    const interval = setInterval(async () => {
-      if (step >= routeCoords.length) {
-        clearInterval(interval);
+    // ---------------- LOOP DRIVER → PICKUP ----------------
+    for (let step = 0; step < routeCoords.length; step++) {
+      const coords = routeCoords[step];
+      if (!coords) continue;
 
-        await pool.query(
-          `UPDATE drivers_rides SET lat = $1, lng = $2 WHERE driver_id = $3`,
-          [driver.lat, driver.lon, socket.driverId]
-        );
-
-        io.to(socket.driverId.toString()).emit("driverArrived", {
-          pickup: { lat: pickuplat, lon: pickuplon },
-          drop: drop
-        });
-        console.log("✅ Driver arrived at pickup location!");
-
-      }
-
-      const [lon, lat] = routeCoords[step];
+      const [lon, lat] = coords;
       driver = { lat, lon };
-      step++;
 
       io.to(socket.driverId.toString()).emit("driverLocation", {
         driver,
@@ -106,65 +97,78 @@ const driverSocket = (io) => {
       });
 
       console.log(`Driver to Pickup: ${driver.lat}, ${driver.lon}`);
-    }, 5000);
+      await delay(1000); // wait 1 second before next step
+    }
 
+    // Finalize arrival at pickup
+    await pool.query(
+      `UPDATE drivers_rides SET lat = $1, lng = $2 WHERE driver_id = $3`,
+      [driver.lat, driver.lon, socket.driverId]
+    );
 
+    io.to(socket.driverId.toString()).emit("driverArrived", {
+      pickup: { lat: pickuplat, lon: pickuplon },
+      drop: drop
+    });
+    console.log("✅ Driver arrived at pickup location!");
 
     // ---------------- FETCH ROUTE PICKUP → DROP ----------------
-    const newRoute = `http://router.project-osrm.org/route/v1/driving/${pickuplon},${pickuplat};${droplat},${droplon}?geometries=geojson`;
+    const newRoute = `http://router.project-osrm.org/route/v1/driving/${pickuplon},${pickuplat};${droplon},${droplat}?geometries=geojson`;
+
     const newRes = await axios.get(newRoute);
     if (!newRes.data.routes || newRes.data.routes.length === 0) {
-      console.log("No route found from pickup to drop");
+      console.log("❌ No route found from pickup to drop");
       return;
     }
 
     const newRoutes = newRes.data.routes[0].geometry.coordinates;
+    if (!newRoutes || newRoutes.length === 0) {
+      console.error("❌ Empty routeCoords to drop");
+      return;
+    }
+
     console.log("Route from Pickup to Drop:", newRoutes);
 
-    // ---------------- SIMULATE DRIVER MOVEMENT TO DROP ----------------
-    let count = 0;
-    const pickupDropInterval = setInterval(async () => {
+    // ---------------- LOOP PICKUP → DROP ----------------
+    for (let count = 0; count < newRoutes.length; count++) {
+      const coords = newRoutes[count];
+      if (!coords) continue;
 
-      if (count >= newRoutes.length) {
-        io.to(socket.driverId.toString()).emit("rideCompleted", {
-          pickup: { lat: pickuplat, lon: pickuplon },
-          drop: drop
-        });
-
-        await pool.query(
-          `UPDATE rides SET status = 'success' WHERE id = $1`,
-          [rideId]
-        );
-
-        await pool.query(
-          `UPDATE drivers_rides SET lat = $1, lng = $2 WHERE driver_id = $3`,
-          [drop.lat, drop.lon, socket.driverId]
-        );
-
-        clearInterval(pickupDropInterval);
-        console.log("Driver reached destination", drop.lat, drop.lon);
-        return;
-      }
-
-      const [lon, lat] = newRoutes[count];
+      const [lon, lat] = coords;
       driver = { lat, lon };
-      
+
       io.to(socket.driverId.toString()).emit("driverLocation", {
         driver,
         drop: drop
       });
 
       console.log(`Driver to Drop: ${driver.lat}, ${driver.lon}`);
-      count++;
-    }, 1000);
+      await delay(5000); // wait 1 sec before next step
+    }
 
-    // ---------------- CLEAR INTERVALS ON DISCONNECT ----------------
-    
+    // Finalize arrival at drop
+    io.to(socket.driverId.toString()).emit("rideCompleted", {
+      pickup: { lat: pickuplat, lon: pickuplon },
+      drop: drop
+    });
+
+    await pool.query(
+      `UPDATE rides SET status = 'success' WHERE id = $1`,
+      [rideId]
+    );
+
+    await pool.query(
+      `UPDATE drivers_rides SET lat = $1, lng = $2 WHERE driver_id = $3`,
+      [drop.lat, drop.lon, socket.driverId]
+    );
+
+    console.log("🎉 Driver reached destination", drop.lat, drop.lon);
 
   } catch (err) {
     console.error("rideAccepted error:", err.message);
   }
 });
+
 
 
     // ---------------- RIDE DECLINED ----------------

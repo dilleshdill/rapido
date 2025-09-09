@@ -8,6 +8,8 @@ import driverRoutes from "./routes/driverRoute.js";
 import checkCordinates from "./routes/checkCordinatesRoute.js";
 import ridesRoute from "./routes/ridesRouter.js";
 import driverSocket from "./sockets/driverSocket.js";
+import crypto from "crypto";
+
 import Razorpay from 'razorpay'
 
 const app = express();
@@ -69,7 +71,7 @@ app.post("/api/payment/verify-payment", (req, res) => {
     }
 
     const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .createHmac("sha256",'lY9F0jnzhLsn721LHkRqPg8f' )
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest("hex");
 

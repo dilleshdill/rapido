@@ -32,7 +32,7 @@ const Payment = () => {
 
       // Create Razorpay Order
       const { data: order } = await axios.post(
-        "http://localhost:5002/api/payment/create-order",
+        "http://localhost:5000/api/payment/create-order",
         {
           amount: price, // Amount in INR
           currency: "INR",
@@ -52,7 +52,7 @@ const Payment = () => {
           try {
             // Verify Payment
             const verification = await axios.post(
-              "http://localhost:5002/api/payment/verify-payment",
+              "http://localhost:5000/api/payment/verify-payment",
               response
             );
 
@@ -91,9 +91,9 @@ const Payment = () => {
   return (
     <div className="flex items-center w-screen justify-center min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       <div className="w-full max-w-md p-8 text-center bg-white shadow-lg rounded-2xl hover:shadow-2xl transition-all duration-300">
-        <h1 className="mb-6 text-4xl font-extrabold text-gray-800 animate-fade-in">
+        <h2 className="mb-6 text-4xl font-extrabold text-gray-800 animate-fade-in">
           Complete Your Payment
-        </h1>
+        </h2>
 
         <p className="mb-8 text-lg text-gray-600">
           Secure and fast checkout for your purchase.
@@ -114,7 +114,7 @@ const Payment = () => {
 
         <div
           onClick={handlePayment}
-          className="inline-block px-8 py-4 text-lg font-semibold text-white bg-blue-500 rounded-xl shadow-md hover:bg-blue-700 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300 transition-transform duration-300 animate-pulse"
+          className="inline-block px-8 py-4 text-lg font-semibold text-black !bg-yellow-400 rounded-xl shadow-md hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300 transition-transform duration-300 animate-pulse"
         >
           Pay Now
         </div>
