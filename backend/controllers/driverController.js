@@ -6,11 +6,12 @@ import generateUserToken from "../utils/user.util.js";
 
 
 async function addDriver(req, res) {
-
   const {city,drivingLicenceImage1,drivingLicenceImage2,email,firstName,lastName,licenceNumber,password,phoneNumber,vehicleBackImage,vehicleFrontImage,vehicleNumber,vehicleType} = req.body;
   try {
     const user = await Driver.createDriver(city,drivingLicenceImage1,drivingLicenceImage2,email,firstName,lastName,licenceNumber,password,phoneNumber,vehicleBackImage,vehicleFrontImage,vehicleNumber,vehicleType);
-    res.status(200).json(user);
+    console.log(user)
+    return generateUserToken(res,user)
+    
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -47,11 +48,26 @@ const driverLogin = async (req, res) => {
 
     return generateUserToken(res,user.rows[0])
 
-    
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-export { addDriver,driverLogin };
+const driverRides = async(req,res) => {
+  const {id,email} = req.user
+  const rides = await pool.query(
+    `SELECT * FROM rides WHERE driver_id = $1`,[id]
+  )
+
+  if (!rides){
+    return res.status(404).json({message:"Driver Not Foudn"})
+  }
+
+  res.status(200).json({data:rides.rows[0]})
+
+}
+
+
+
+export { addDriver,driverLogin,driverRides };

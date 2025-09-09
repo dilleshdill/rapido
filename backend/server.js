@@ -32,6 +32,7 @@ app.use("/", userRoutes);
 app.use("/driver",driverRoutes);
 app.use("/check",checkCordinates)
 app.use("/upload", uploadRoutes);
+
 app.use("/rides",ridesRoute)
 
 const razorpay = new Razorpay({

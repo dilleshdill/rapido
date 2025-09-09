@@ -12,8 +12,6 @@ const generateUserToken = (res, user) => {
       expiresIn: "30d",
     });
 
-
-
     res.cookie("token", token, {
       httpOnly: true,
       secure: false, 
