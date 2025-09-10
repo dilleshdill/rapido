@@ -10,6 +10,7 @@ import {
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import L from "leaflet";
+import bike from "../assets/bike3.png";
 
 const defaultCenter = [20.5937, 78.9629]; // India center
 
@@ -48,8 +49,8 @@ const DriverMap = ({ driverLatLng, pickup }) => {
     }),
     bike: new L.Icon({
       iconUrl:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTw91j2ZcJAb2ghW5sY8IDd-0oFUJgoJEM66A&s", // bike icon
-      iconSize: [40, 30],
+        bike, // bike icon
+      iconSize: [60, 60],
       iconAnchor: [20, 40],
     }),
     auto: new L.Icon({
