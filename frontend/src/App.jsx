@@ -17,11 +17,17 @@ import PickupToDestination from './components/PickupToDestination'
 import Payment from './pages/Payment'
 import PaymentSuccess from './pages/PaymentSuccess';
 import DriverRides from './pages/DriverRides';
+import DriverProfile from './pages/DriverProfile';
+
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const App = () => {
   return(
     <BrowserRouter>
-      <Routes>
+     <ToastContainer />
+      <Routes> 
         <Route exact path="/" element={<Home />} />
         <Route exact path="/login" element={<Login />} />
         <Route exact path="/signup" element={<SignUpPage />} />
@@ -38,6 +44,8 @@ const App = () => {
         <Route exact path="/payment-page" element={<Payment />} />
         <Route exact path="/payment-success" element={<PaymentSuccess />} />
         <Route exact path="/driver-rides" element={<DriverRides />} />
+        <Route exact path="/driver-profile" element = {<DriverProfile />} />
+        
       </Routes>
     </BrowserRouter>
   )

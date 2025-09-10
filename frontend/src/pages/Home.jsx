@@ -6,6 +6,8 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
+
+
 const markerIcon = new L.Icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
   iconSize: [35, 35],
@@ -68,9 +70,10 @@ const Home = () => {
   const [dropValue, setDropValue] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [dropSuggestions, setDropSuggestions] = useState([]);
-  const [showMap, setShowMap] = useState(null); // "pickup" | "drop" | null
+  const [showMap, setShowMap] = useState(null);
+  const [isShow,setShow] = useState(false)
 
-  // Socket for ride success (optional)
+  
   useEffect(() => {
     const socket = io("http://localhost:5000");
     socket.emit("userId", 203);
@@ -268,7 +271,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Map Picker Modal */}
+      
       {showMap && (
         <LocationPicker
           onSelect={(address, coords) => {
@@ -283,9 +286,11 @@ const Home = () => {
             }
             setShowMap(null);
           }}
+
           onClose={() => setShowMap(null)}
         />
       )}
+
     </div>
   );
 };

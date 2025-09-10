@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CostEstimation from "./CostEstimation";
+import ReactModal from "react-modal";
+import Loader from "../components/Loader";
 
 const PickPoints = ({ getRide }) => {
   const [selectedLocation, setSelectedLocation] = useState("");
@@ -9,8 +11,9 @@ const PickPoints = ({ getRide }) => {
   const [dropSuggestions, setDropSuggestions] = useState([]);
   const [showEstimation, setShowEstimation] = useState(false);
   const [distance, setDistance] = useState(null);
+  const [isOpen,setOpen] = useState(false)
 
-  // ✅ Load values from localStorage only once
+
   useEffect(() => {
     const pickup = localStorage.getItem("pickupAddress");
     const drop = localStorage.getItem("dropAddress");
@@ -18,7 +21,8 @@ const PickPoints = ({ getRide }) => {
     if (pickup) setSelectedLocation(pickup);
     if (drop) setDropValue(drop);
   }, []);
-  // Debounced pickup suggestions
+  
+
   useEffect(() => {
     const handler = setTimeout(() => {
       if (selectedLocation.length >= 3) {
@@ -28,7 +32,7 @@ const PickPoints = ({ getRide }) => {
     return () => clearTimeout(handler);
   }, [selectedLocation]);
 
-  // Debounced drop suggestions
+ 
   useEffect(() => {
     const handler = setTimeout(() => {
       if (dropValue.length >= 3) {
@@ -57,9 +61,12 @@ const PickPoints = ({ getRide }) => {
     }
   };
 
-  const getEstimation = (dist) => {
+  const getEstimation  = (dist) => {
+    setOpen(false)
     console.log("Distance :", dist);
     setDistance(dist);
+    getRide({ pickup: selectedLocation, drop: dropValue, distance:dist });
+    console.log("console distance in pickpoints",dist)
   };
 
   // Render suggestion list
@@ -82,6 +89,7 @@ const PickPoints = ({ getRide }) => {
 
   return (
     <div className="w-full bg-gray-100">
+      {isOpen && <Loader />}
       <div className="relative z-10 w-full bg-white rounded-xl p-2 flex flex-col gap-4">
         {/* Pickup */}
         <div className="relative">
@@ -119,7 +127,7 @@ const PickPoints = ({ getRide }) => {
         <div className="flex flex-col md:flex-row gap-3 justify-between">
           <button
             onClick={() => {
-              getRide({ pickup: selectedLocation, drop: dropValue, distance });
+              setOpen(true)
               setShowEstimation(!showEstimation);
             }}
             className="mt-4 w-full md:w-1/5 outline-none !bg-yellow-400 text-black font-bold py-3 rounded-lg hover:bg-yellow-500 transition"

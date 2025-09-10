@@ -7,9 +7,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { io } from "socket.io-client";
-import Loader from "../components/Loader";
-
-
+import { toast } from "react-toastify";
 
 
 const vehicles = [
@@ -17,31 +15,42 @@ const vehicles = [
   { id: "auto", label: "Auto", image: auto,cost:10 },
   { id: "cab", label: "Cab", image: cab,cost:15 },
 ];
-const VehicleSelection = () => {
 
+const VehicleSelection = () => {
   const [status,setStaus] = useState("");
   console.log(status)
+  const [open,setOpen] = useState()
 
-  
+  const showSuccess = () => {
+      toast.success("Booking Successful 🎉", {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "light",
+      });
+    };
+
+    const showError = () => {
+      toast.error("Something Wrong", {
+        position:"top-right",
+        autoClose:3000,
+        theme:"light"
+      })
+    }
 
   useEffect(()=>{
     const socket = io("http://localhost:5000");
-
-    
     socket.on("rideCancel",rideId=>{
       console.log("ride cancelled at the vechile seletion",rideId)
       setStaus("cancelled")
     })
-    // socket.on("rideSuccess", (data) => {
-    // console.log("rideSuccess received:", data);})
+    
     return () => {
-      
       socket.off("rideCancel");
-      // socket.off("rideSuccess");
+      
       socket.disconnect();
     }
-
   },[])
+
   const [selected, setSelected] = useState("");
   const [pickup, setPickup] = useState("");
   const [drop, setDrop] = useState(null);
@@ -54,18 +63,17 @@ const VehicleSelection = () => {
   const getDistance = (dist) => {
     console.log("Pickup:",dist.pickup);
     console.log("Drop:",dist.drop);
+    console.log("Distance in vehicle selection:", dist.distance);
     if (dist.pickup && dist.drop) {
       setPickup(dist.pickup);
       setDrop(dist.drop);
       setDistance(dist.distance);
       setIsShow(true);
+      setOpen(false)
       console.log("Distance in vehicle selection:", dist.distance);
       setRideClick(true)
     }
-    // You can add logic here to calculate distance or fetch route details
   }
-
-
 
   const setIntoBackend = async () => {
     const data = {
@@ -86,25 +94,23 @@ const VehicleSelection = () => {
       if (response.status === 200) {
         const result = await response.data;
         console.log("Booking successful:", result);
-        alert("Booking successful!");
+        showSuccess()
         navigate('/booking-confirmation', { state: { ride: result } });
-        // Optionally, redirect or clear selections here
       }
       else {
         console.error("Booking failed:", response.statusText);
-        alert("Booking failed. Please try again.");
+        showError()
       }
     } catch (error) {
       console.error("Error during booking:", error);
-      alert("An error occurred. Please try again.");
+      showError()
     }
   };
 
-
   return (
     <div className="flex flex-col w-screen top-0 bg-gray-100 p-0 m-0">
-      <PickPoints getRide={getDistance}/>
-      {distance == null && rideClick && <Loader/>}
+      <PickPoints getRide={getDistance} />
+      
       {isShow && distance !== null && <div className="bg-white mt-5 p-5 rounded-2xl shadow-lg md:w-full w-[350px]">
         <h2 className="text-xl font-semibold mb-6">Select Service</h2>
         <div className="grid gap-4">
@@ -126,10 +132,7 @@ const VehicleSelection = () => {
                     {parseInt(distance.toFixed(2) * v.cost) + 10} ₹
                   </div>
                 )}
-
-
               </div>
-
               <input
                 type="radio"
                 name="vehicle"
@@ -151,6 +154,7 @@ const VehicleSelection = () => {
         </button>
         </div>
       </div>}
+      
     </div>
   );
 };

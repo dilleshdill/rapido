@@ -1,13 +1,16 @@
-import React from 'react'
+import React from "react";
 
 const Loader = () => {
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-gray-100">
+    <div className="fixed inset-0 w-full h-screen flex items-center justify-center bg-gray-100 z-50">
       {/* Loader Wrapper */}
       <div className="flex items-center justify-center">
         <div className="relative w-[200px] h-[100px] flex flex-col items-center justify-end overflow-hidden">
           {/* Truck Body */}
-          <div className="w-[130px] animate-[motion_1s_linear_infinite] mb-1.5">
+          <div
+            className="w-[130px] mb-1.5"
+            style={{ animation: "motion 1s linear infinite" }}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -100,8 +103,14 @@ const Loader = () => {
 
           {/* Road */}
           <div className="w-full h-[2px] bg-[#282828] relative rounded-md">
-            <div className="absolute w-[20px] h-full bg-[#282828] right-[-50%] rounded-md border-l-[10px] border-white animate-[roadAnimation_1.4s_linear_infinite]"></div>
-            <div className="absolute w-[10px] h-full bg-[#282828] right-[-65%] rounded-md border-l-[4px] border-white animate-[roadAnimation_1.4s_linear_infinite]"></div>
+            <div
+              className="absolute w-[20px] h-full bg-[#282828] right-[-50%] rounded-md border-l-[10px] border-white"
+              style={{ animation: "roadAnimation 1.4s linear infinite" }}
+            ></div>
+            <div
+              className="absolute w-[10px] h-full bg-[#282828] right-[-65%] rounded-md border-l-[4px] border-white"
+              style={{ animation: "roadAnimation 1.4s linear infinite" }}
+            ></div>
           </div>
 
           {/* Lamp Post */}
@@ -109,7 +118,8 @@ const Loader = () => {
             xmlSpace="preserve"
             viewBox="0 0 453.459 453.459"
             xmlns="http://www.w3.org/2000/svg"
-            className="absolute bottom-0 right-[-90%] h-[90px] animate-[roadAnimation_1.4s_linear_infinite]"
+            className="absolute bottom-0 right-[-90%] h-[90px]"
+            style={{ animation: "roadAnimation 1.4s linear infinite" }}
           >
             <path d="M252.882,0c-37.781,0-68.686,29.953-70.245,67.358h-6.917v8.954c-26.109,2.163-45.463,10.011-45.463,19.366h9.993
             c-1.65,5.146-2.507,10.54-2.507,16.017c0,28.956,23.558,52.514,52.514,52.514c28.956,0,52.514-23.558,52.514-52.514
@@ -139,6 +149,7 @@ const Loader = () => {
         `}
       </style>
     </div>
-  )
-}
+  );
+};
+
 export default Loader;

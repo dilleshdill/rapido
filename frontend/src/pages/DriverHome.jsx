@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import DriverMap from "../components/DriverMap";
 import { useNavigate, Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import Loader from "../components/Loader";
+
 
 const socket = io("http://localhost:5000");
 
@@ -13,12 +16,31 @@ const DriverHome = () => {
   const [showRide, setShowRide] = useState(false);
   const [rideData, setRideData] = useState(null);
   const timer = localStorage.getItem("timer");
+  const [showLoader,setLoader] = useState(false)
 
   const navigate = useNavigate();
   const [driverArrivedData, setDriverArrivedData] = useState(null);
 
+  const showSuccessPickup = () => {
+    toast.success("Driver Arrived To You 🎉", {
+      position: "top-right",
+      autoClose: 3000,
+      theme: "light",
+    });
+  };
+
+  const showSuccess = () => {
+    toast.success("You Arrived To Destination 🎉", {
+      position: "top-right",
+      autoClose: 3000,
+      theme: "light",
+    });
+  };
+
+
+
   useEffect(() => {
-    // Load any stored ride data (for refresh)
+    
     const rideDataStr = localStorage.getItem("rideConfirmed");
     if (rideDataStr) {
       setRideData(JSON.parse(rideDataStr));
@@ -37,24 +59,26 @@ const DriverHome = () => {
 
     // Ride confirmed
     socket.on("rideConfirmed", (rideData) => {
+      setLoader(false)
+      setLoader(true)
       setShowRide(false);
       setShowMap(true);
       console.log("✅ Ride confirmed:", rideData);
       localStorage.setItem("rideConfirmed", JSON.stringify(rideData));
       setRideData(rideData);
+      
     });
 
-    // Driver Arrived
     socket.on("driverArrived", (rideData) => {
       console.log("✅ Driver Arrived:", rideData);
-
+      showSuccessPickup()
       localStorage.setItem("driverArrived", JSON.stringify(rideData));
       setDriverArrivedData(rideData);
       setPickup({
         lat: rideData.drop.lat,
         lon: rideData.drop.lon,
       });
-      alert("Driver Arrived");
+      
     });
 
     // Ride Completed
@@ -63,7 +87,7 @@ const DriverHome = () => {
       localStorage.removeItem("driverArrived");
       setShowMap(false);
       setShowRide(false);
-      alert("rideCompleted");
+      showSuccess()
       navigate("/payment-page");
     });
 
@@ -101,7 +125,9 @@ const DriverHome = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen w-screen">
-      {/* ✅ Navbar */}
+      {
+        showLoader && <Loader />
+      }
       <nav className="bg-white shadow-md px-6 py-5 flex justify-between items-center">
         <h3 className="text-xl font-bold text-yellow-400">Driver Dashboard</h3>
         <div className="flex gap-6">
