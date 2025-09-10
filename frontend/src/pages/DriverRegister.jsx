@@ -9,15 +9,13 @@ import rapidoImage1 from "../assets/rapidoImage1.webp";
 import { FaUpload } from "react-icons/fa";
 import axios from "axios";
 
-
 const supportedCities = [
   "Bangalore", "Hyderabad", "Chennai", "Pune",
   "Mumbai", "Delhi", "Kolkata", "Jaipur", "Ahmedabad"
 ];
 
-
 const RegisterPage = () => {
-  // Load initial state from localStorage or set defaults
+  
   const [state, setState] = useState(() => {
     const savedPage = localStorage.getItem("page");
     return savedPage ? parseInt(savedPage) : 1;
@@ -129,9 +127,10 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen min-w-screen flex items-center justify-center p-4">
       <div className="w-full max-w-[1200px] bg-orange-300 rounded-3xl shadow-2xl flex flex-col md:flex-row">
-        <div className="w-full md:w-1/2 rounded-3xl bg-white">
+        {/* Image Carousel - Hidden on mobile */}
+        <div className="hidden md:block w-full md:w-1/2 rounded-3xl bg-white">
           <Slider {...settings}>
             {images.map((src, index) => (
               <div key={index} className="relative h-[400px] md:h-[600px] w-full">
@@ -145,11 +144,11 @@ const RegisterPage = () => {
           </Slider>
         </div>
         
-        <div className="w-full md:w-1/2 p-6 md:p-12 flex items-center justify-center">
+        <div className="w-full md:w-1/2 p-4 md:p-6 lg:p-12 flex items-center justify-center">
           {state === 1 && (
             <div className="max-w-md w-full">
               <h1 className="text-black text-2xl md:text-4xl font-semibold mb-2">Create an account</h1>
-              <p className="text-gray-600 mb-8">
+              <p className="text-gray-600 mb-6 md:mb-8 text-sm md:text-base">
                 Already have an account?{" "}
                 <a href="https://abhirajk.vercel.app/" className="text-purple-600 hover:underline">Log in</a>
               </p>
@@ -162,7 +161,7 @@ const RegisterPage = () => {
                     placeholder="First name"
                     value={formData.firstName}
                     onChange={handleChange}
-                    className="w-full md:w-1/2 bg-white text-black rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-600 border border-gray-300"
+                    className="w-full bg-white text-black rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-600 border border-gray-300"
                     required
                   />
                   <input
@@ -171,7 +170,7 @@ const RegisterPage = () => {
                     placeholder="Last name"
                     value={formData.lastName}
                     onChange={handleChange}
-                    className="w-full md:w-1/2 bg-white text-black rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-600 border border-gray-300"
+                    className="w-full bg-white text-black rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-600 border border-gray-300"
                     required
                   />
                 </div>
@@ -215,16 +214,16 @@ const RegisterPage = () => {
                   required
                 />
 
-                <label className="flex items-center space-x-2 cursor-pointer">
+                <label className="flex items-start space-x-2 cursor-pointer">
                   <input
                     type="checkbox"
                     name="termsAccepted"
                     checked={formData.termsAccepted}
                     onChange={handleChange}
-                    className="rounded border-gray-600 text-purple-600 focus:ring-purple-600"
+                    className="mt-1 rounded border-gray-600 text-purple-600 focus:ring-purple-600"
                     required
                   />
-                  <span className="text-gray-600">I agree to the <a href="#" className="text-purple-600 hover:underline">Terms & Conditions</a></span>
+                  <span className="text-gray-600 text-sm md:text-base">I agree to the <a href="#" className="text-purple-600 hover:underline">Terms & Conditions</a></span>
                 </label>
 
                 <button
@@ -317,7 +316,7 @@ const RegisterPage = () => {
               </div>
               <div className="flex justify-end">
                 <button 
-                  className="bg-purple-600 text-white p-3 rounded disabled:opacity-50 disabled:cursor-not-allowed mt-4 w-1/3 hover:bg-purple-700 transition-colors"
+                  className="bg-purple-600 text-white p-3 rounded disabled:opacity-50 disabled:cursor-not-allowed mt-4 w-full md:w-1/3 hover:bg-purple-700 transition-colors"
                   onClick={() => updateState(4)}
                   disabled={!vehicleType}
                 >
@@ -328,9 +327,9 @@ const RegisterPage = () => {
           )}
           
           {state === 4 && (
-            <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-lg">
-              <h2 className="text-2xl font-semibold text-black mb-2">Upload Documents</h2>
-              <p className="text-gray-500 mb-6">
+            <div className="max-w-md w-full bg-white p-4 md:p-6 lg:p-8 rounded-xl shadow-lg">
+              <h2 className="text-xl md:text-2xl font-semibold text-black mb-2">Upload Documents</h2>
+              <p className="text-gray-500 mb-4 md:mb-6 text-sm md:text-base">
                 Please upload the necessary documents to proceed.
               </p>
 
@@ -346,7 +345,7 @@ const RegisterPage = () => {
                     <img
                       src={URL.createObjectURL(files)}
                       alt="Front Preview"
-                      className="w-40 h-40 object-cover rounded-lg shadow-md"
+                      className="w-32 h-32 md:w-40 md:h-40 object-cover rounded-lg shadow-md"
                     />
                     <button
                       type="button"
@@ -359,10 +358,10 @@ const RegisterPage = () => {
                 ) : (
                   <label
                     htmlFor="frontUpload"
-                    className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-purple-600 hover:bg-purple-50 transition-colors"
+                    className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-4 md:p-6 cursor-pointer hover:border-purple-600 hover:bg-purple-50 transition-colors"
                   >
-                    <FaUpload className="text-gray-400 text-2xl mb-2" />
-                    <span className="text-gray-400">Front View</span>
+                    <FaUpload className="text-gray-400 text-xl md:text-2xl mb-2" />
+                    <span className="text-gray-400 text-sm md:text-base">Front View</span>
                     <input
                       id="frontUpload"
                       type="file"
@@ -379,7 +378,7 @@ const RegisterPage = () => {
                     <img
                       src={URL.createObjectURL(files2)}
                       alt="Back Preview"
-                      className="w-40 h-40 object-cover rounded-lg shadow-md"
+                      className="w-32 h-32 md:w-40 md:h-40 object-cover rounded-lg shadow-md"
                     />
                     <button
                       type="button"
@@ -392,10 +391,10 @@ const RegisterPage = () => {
                 ) : (
                   <label
                     htmlFor="backUpload"
-                    className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-purple-600 hover:bg-purple-50 transition-colors"
+                    className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-4 md:p-6 cursor-pointer hover:border-purple-600 hover:bg-purple-50 transition-colors"
                   >
-                    <FaUpload className="text-gray-400 text-2xl mb-2" />
-                    <span className="text-gray-400">Back View</span>
+                    <FaUpload className="text-gray-400 text-xl md:text-2xl mb-2" />
+                    <span className="text-gray-400 text-sm md:text-base">Back View</span>
                     <input
                       id="backUpload"
                       type="file"
@@ -425,7 +424,7 @@ const RegisterPage = () => {
                 <button
                   onClick={() => updateState(5)}
                   disabled={!formData.licenceNumber || !files || !files2}
-                  className="bg-purple-600 text-white p-2 rounded-lg w-1/3 hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-purple-600 text-white p-2 rounded-lg w-full md:w-1/3 hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
                 </button>
@@ -434,9 +433,9 @@ const RegisterPage = () => {
           )}
           
           {state === 5 && (
-            <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-lg">
-              <h2 className="text-2xl font-semibold text-black mb-2">Upload Documents</h2>
-              <p className="text-gray-500 mb-6">
+            <div className="max-w-md w-full bg-white p-4 md:p-6 lg:p-8 rounded-xl shadow-lg">
+              <h2 className="text-xl md:text-2xl font-semibold text-black mb-2">Upload Documents</h2>
+              <p className="text-gray-500 mb-4 md:mb-6 text-sm md:text-base">
                 Please upload the necessary documents to proceed.
               </p>
 
@@ -446,7 +445,7 @@ const RegisterPage = () => {
                   Vehicle Verification
                 </label>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                 {/* Vehicle Front View */}
                 {files3 ? (
                   <div className="flex flex-col items-center">
@@ -454,7 +453,7 @@ const RegisterPage = () => {
                     <img
                       src={URL.createObjectURL(files3)}
                       alt="Front Preview"
-                      className="w-40 h-40 object-cover rounded-lg shadow-md"
+                      className="w-32 h-32 md:w-40 md:h-40 object-cover rounded-lg shadow-md"
                     />
                     <button
                       type="button"
@@ -467,10 +466,10 @@ const RegisterPage = () => {
                 ) : (
                   <label
                     htmlFor="frontUpload"
-                    className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-purple-600 hover:bg-purple-50 transition-colors"
+                    className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-4 md:p-6 cursor-pointer hover:border-purple-600 hover:bg-purple-50 transition-colors"
                   >
-                    <FaUpload className="text-gray-400 text-2xl mb-2" />
-                    <span className="text-gray-400">Front View</span>
+                    <FaUpload className="text-gray-400 text-xl md:text-2xl mb-2" />
+                    <span className="text-gray-400 text-sm md:text-base">Front View</span>
                     <input
                       id="frontUpload"
                       type="file"
@@ -487,7 +486,7 @@ const RegisterPage = () => {
                     <img
                       src={URL.createObjectURL(files4)}
                       alt="Back Preview"
-                      className="w-40 h-40 object-cover rounded-lg shadow-md"
+                      className="w-32 h-32 md:w-40 md:h-40 object-cover rounded-lg shadow-md"
                     />
                     <button
                       type="button"
@@ -500,10 +499,10 @@ const RegisterPage = () => {
                 ) : (
                   <label
                     htmlFor="backUpload"
-                    className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-purple-600 hover:bg-purple-50 transition-colors"
+                    className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-4 md:p-6 cursor-pointer hover:border-purple-600 hover:bg-purple-50 transition-colors"
                   >
-                    <FaUpload className="text-gray-400 text-2xl mb-2" />
-                    <span className="text-gray-400">Back View</span>
+                    <FaUpload className="text-gray-400 text-xl md:text-2xl mb-2" />
+                    <span className="text-gray-400 text-sm md:text-base">Back View</span>
                     <input
                       id="backUpload"
                       type="file"
@@ -533,7 +532,7 @@ const RegisterPage = () => {
                 <button
                   onClick={handleSubmit}
                   disabled={!formData.vehicleNumber || !files3 || !files4}
-                  className="bg-purple-600 text-white p-2 rounded-lg w-1/3 hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-purple-600 text-white p-2 rounded-lg w-full md:w-1/3 hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Register
                 </button>

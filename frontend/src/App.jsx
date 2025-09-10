@@ -18,7 +18,7 @@ import Payment from './pages/Payment'
 import PaymentSuccess from './pages/PaymentSuccess';
 import DriverRides from './pages/DriverRides';
 import DriverProfile from './pages/DriverProfile';
-
+import UserProfile from './pages/UserProfile';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -45,7 +45,7 @@ const App = () => {
         <Route exact path="/payment-success" element={<PaymentSuccess />} />
         <Route exact path="/driver-rides" element={<DriverRides />} />
         <Route exact path="/driver-profile" element = {<DriverProfile />} />
-        
+        <Route exact path="/user-profile" element ={ <UserProfile />} />
       </Routes>
     </BrowserRouter>
   )

@@ -6,4 +6,5 @@ const ridesRoute = expres.Router();
 ridesRoute.post("/",authenticate,createRide);
 ridesRoute.get("/ride-details",getRides)
 
+
 export default ridesRoute;

@@ -59,7 +59,7 @@ const BookingConfirmation = () => {
     );
   }
 
-  // Pick latest ride info (server confirm overrides local ride)
+  
   const displayRide = confirm || ride;
 
   return (

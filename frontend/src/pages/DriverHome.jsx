@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import Loader from "../components/Loader";
 
 
+
 const socket = io("http://localhost:5000");
 
 const DriverHome = () => {
@@ -125,9 +126,6 @@ const DriverHome = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen w-screen">
-      {
-        showLoader && <Loader />
-      }
       <nav className="bg-white shadow-md px-6 py-5 flex justify-between items-center">
         <h3 className="text-xl font-bold text-yellow-400">Driver Dashboard</h3>
         <div className="flex gap-6">

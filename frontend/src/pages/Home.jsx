@@ -5,6 +5,7 @@ import { io } from "socket.io-client";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { Link } from "react-router-dom";
 
 
 
@@ -92,7 +93,6 @@ const Home = () => {
     return () => clearTimeout(handler);
   }, [selectedLocation]);
 
-  // Debounced drop suggestions
   useEffect(() => {
     const handler = setTimeout(() => {
       if (dropValue.length >= 3)
@@ -101,7 +101,7 @@ const Home = () => {
     return () => clearTimeout(handler);
   }, [dropValue]);
 
-  // Fetch suggestions from Nominatim restricted to India
+
   const fetchSuggestions = async (input, setList) => {
     try {
       const response = await axios.get("https://nominatim.openstreetmap.org/search", {
@@ -120,7 +120,7 @@ const Home = () => {
     }
   };
 
-  // Convert address to coordinates
+
   const getCoordinates = async (address) => {
     try {
       const response = await axios.get("https://nominatim.openstreetmap.org/search", {
@@ -211,7 +211,15 @@ const Home = () => {
   return (
     <div className="min-w-screen min-h-screen bg-gray-100">
       <header className="flex justify-between items-center p-6 bg-white shadow-md">
-        <div className="text-yellow-400 font-bold text-2xl">Rapido</div>
+        <div className="text-yellow-400 font-bold text-2xl cursor-pointer">Rapido</div>
+        <div className="flex flex-row ">
+          <Link to="/all-rides">
+            <p className="text-lg font-sans font-semibold text-gray-900 mr-5 cursor-pointer">Rides</p>
+          </Link>
+          <Link to="/user-profile">
+              <p className="text-lg font-sans font-semibold text-gray-900 cursor-pointer">Profile</p>  
+          </Link>      
+        </div>
       </header>
 
       <section className="relative flex flex-col items-center justify-center text-center py-20 bg-white">
@@ -290,6 +298,7 @@ const Home = () => {
           onClose={() => setShowMap(null)}
         />
       )}
+
 
     </div>
   );

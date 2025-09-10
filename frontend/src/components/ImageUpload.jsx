@@ -9,7 +9,6 @@ function ImageUpload({getFunction, getValue}) {
   };
 
   useEffect(() => {
-    
     handleUpload()
   }, []);
 
@@ -25,11 +24,8 @@ function ImageUpload({getFunction, getValue}) {
   };
 
   return (
-    <div>
-      <h2>Upload Image</h2>
-
-      
-    </div>
+    <>
+    </>
   );
 }
 

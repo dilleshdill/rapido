@@ -7,7 +7,7 @@ import axios from "axios";
 import { useRef } from "react";
 import ImageUpload from "../components/ImageUpload";
 
-const DriverProfile = () => {
+const UserProfile = () => {
   
   const [driverData,setDriverData] = useState({})
   const fileUploadRef = useRef(null)
@@ -31,10 +31,10 @@ const DriverProfile = () => {
 
    const fetchedData = async () => {
     try {
-      const token = Cookies.get("authToken");
+      const token = Cookies.get("userToken");
       
       const response = await axios.get(
-        "http://localhost:5000/driver/getDriverDetailes",
+        "http://localhost:5000/userDetailes",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -73,18 +73,18 @@ const DriverProfile = () => {
     <div className="min-h-screen min-w-screen bg-gray-100 p-4 sm:p-8">
       
       <nav className="bg-white shadow-md px-6 py-5 flex justify-between items-center rounded-2xl">
-        <Link to="/driver-home">
-            <p className="text-xl font-bold text-yellow-400">Driver Dashboard</p>
+        <Link to="/">
+            <p className="text-xl font-bold text-yellow-400">User Rapido</p>
         </Link>
         <div className="flex gap-6">
           <Link
-            to="/driver-rides"
+            to="/all-rides"
             className="text-gray-700 hover:text-blue-600 font-medium transition"
           >
-            Driver Rides
+            Rides
           </Link>
           <Link
-            to="/driver-profile"
+            to="/user-profile"
             className="text-gray-700 hover:text-blue-600 font-medium transition"
           >
             Profile
@@ -103,47 +103,21 @@ const DriverProfile = () => {
         type="file"
         ref={fileUploadRef}
         className="hidden"
-        onChange={getImageHandle}   // ✅ correct
+        onChange={getImageHandle}   
         />
-
         {
-            files && <ImageUpload getFunction={getImage} getValue={files} />
+          files && <ImageUpload getFunction={getImage} getValue={files} />
         }
-        <h1 className="mt-4 text-2xl font-bold text-gray-900">{driverData.firstname}</h1>
-        <div className="flex items-center justify-center gap-2 mt-1">
-          <span className="text-yellow-700 text-lg">⭐</span>
-          <span className="font-semibold">{driverData.rating} / 5</span>
-        </div>
-        <p className="mt-2 text-gray-800 font-medium">{driverData.vehicle_type}</p>
+        <h1 className="mt-4 text-2xl font-bold text-gray-900">{driverData.firstname}  {driverData.lastname} </h1>
       </div>
-
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
-        <StatCard label="Trips Completed"  emoji="🚗" />
-        <StatCard label="Experience"  emoji="⏱️" />
-        <StatCard label="Plate No" value={driverData.vehicle_number} emoji="🔖" />
-        <StatCard label="Rating" value={driverData.rating} emoji="🌟" />
-      </div>
-
 
       <div className="bg-white rounded-3xl shadow-lg p-6 mt-6">
         <h2 className="text-xl font-bold text-gray-900 mb-4">Contact Info</h2>
-        <ContactItem label="Phone" value={driverData.phonenumber} emoji="📞" />
         <ContactItem label="Email" value={driverData.email} emoji="✉️" />
-        <ContactItem label="Location" value={driverData.city} emoji="📍" />
       </div>
-
-      
     </div>
   );
-};
-
-const StatCard = ({ label, value, emoji }) => (
-  <div className="bg-white rounded-2xl shadow-md p-4 flex flex-col items-center justify-center hover:shadow-lg transition">
-    <span className="text-2xl">{emoji}</span>
-    <p className="text-gray-500 text-sm mt-1">{label}</p>
-    <p className="text-gray-900 font-semibold mt-1">{value}</p>
-  </div>
-);
+};  
 
 const ContactItem = ({ label, value, emoji }) => (
   <div className="flex items-center gap-4 border-b border-gray-200 py-2">
@@ -155,4 +129,4 @@ const ContactItem = ({ label, value, emoji }) => (
   </div>
 );
 
-export default DriverProfile;
+export default UserProfile;

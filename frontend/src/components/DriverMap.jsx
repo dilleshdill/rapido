@@ -14,7 +14,7 @@ import bike from "../assets/bike3.png";
 
 const defaultCenter = [20.5937, 78.9629]; // India center
 
-// Auto-fit map bounds to the route
+
 const FitBounds = ({ route }) => {
   const map = useMap();
   useEffect(() => {
@@ -31,7 +31,7 @@ const DriverMap = ({ driverLatLng, pickup }) => {
   const [distance, setDistance] = useState(null);
   const [duration, setDuration] = useState(null);
 
-  // Load ride data from localStorage only once
+  
   useEffect(() => {
     const rideDataStr = localStorage.getItem("rideConfirmed");
     if (rideDataStr) {

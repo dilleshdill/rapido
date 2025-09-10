@@ -77,6 +77,19 @@ const driverRides = async(req,res) => {
 
 }
 
+const getDetailes = async(req,res) => {
+  const {email} = req.user
+  console.log("driver detailes",email)
+
+  const data = await pool.query(
+    `SELECT * FROM drivers WHERE email = $1`,[email]
+  )
+  if(!data){
+    res.status(201).json({message:"Driver Not Found"})
+  }
+  res.status(200).json({data:data.rows[0]})
+}
 
 
-export { addDriver,driverLogin,driverRides };
+
+export { addDriver,driverLogin,driverRides ,getDetailes};

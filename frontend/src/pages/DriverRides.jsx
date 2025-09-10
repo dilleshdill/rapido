@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import Loader from "../components/Loader";
+import { Link } from "react-router-dom";
 
 const DriverRides = () => {
   const [totalRides, setTotalRides] = useState([]);
@@ -44,11 +46,23 @@ const fetchRides = async () => {
   };
 
   return (
+    
     <div className="p-6 min-h-screen w-screen bg-gray-100">
-      <h2 className="text-2xl font-bold mb-6">My Rides</h2>
+      
+      <div className="flex justify-between rounded-2xl  ">
+        <h2 className="text-2xl font-bold mb-6">My Rides</h2>
+        <div className="flex ">
+          <Link to="/driver-home">
+            <p className="text-lg font-semibold font-sans mr-5 cursor-pointer">Home</p>
+          </Link>
+          <Link to="/driver-profile">
+            <p className="text-lg font-semibold font-sans mr-5 cursor-pointer">Profile</p>
+          </Link>
+        </div>
+      </div>
 
       {totalRides.length === 0 ? (
-        <p className="text-gray-700">No rides found.</p>
+        <Loader />
       ) : (
         <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {totalRides.map((ride) => (

@@ -33,10 +33,10 @@ const PaymentSuccess = () => {
   
           {/* Contact Information */}
           <div className="pt-6 sm:pt-8 mt-6 sm:mt-8 border-t border-gray-100">
-            <p className="text-base sm:text-lg text-gray-700">Have questions? Contact us at:</p>
-            <a href="mailto:admin@eliteai.tools" className="inline-block mt-2 text-lg sm:text-xl font-medium text-blue-600 transition-colors duration-200 hover:text-blue-800">
-              admin@gmail.com
-            </a>
+            <p className="text-base sm:text-lg text-gray-700">Rate your Journey</p>
+            {
+              
+            }
           </div>
   
           {/* Back to Dashboard Button */}
