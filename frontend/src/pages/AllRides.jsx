@@ -54,7 +54,6 @@ const AllRides = () => {
 
   return (
     <div className="p-6 min-h-screen w-screen bg-gray-100">
-      
       <div className="flex justify-between rounded-2xl  ">
         <h2 className="text-2xl font-bold mb-6">My Rides</h2>
         <div className="flex ">

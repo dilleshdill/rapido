@@ -30,7 +30,7 @@ const BookingConfirmation = () => {
   const getData = async () => {
   try {
     console.log("Ride ID:", ride.id);
-
+    localStorage.setItem("RideId",ride.id)
     const res = await axios.get(
       `http://localhost:5000/rides/ride-details?rideId=${ride.id}` // ✅ no space
     );

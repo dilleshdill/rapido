@@ -32,6 +32,8 @@ async function listUsers(req, res) {
   }
 }
 
+
+
 const userDetailes = async(req,res) => {
   const {email} = req.user
   console.log("user email",email)
@@ -47,4 +49,51 @@ const userDetailes = async(req,res) => {
 
   res.status(200).json({data:data.rows[0]})
 }
-export { addUser, listUsers,getUserRides,userDetailes };
+
+const ratingSubmited = async(req,res) => {
+    const { id, rating } = req.body;
+    console.log("ride id ", id);
+
+    
+    const driverRes = await pool.query(
+      `SELECT driver_id FROM rides WHERE id = $1`,
+      [id]
+    );
+
+    if (driverRes.rows.length === 0) {
+      return res.status(404).json({ message: "Ride not found" });
+    }
+
+    const driverId = driverRes.rows[0].driver_id;
+
+    
+    await pool.query(
+      `UPDATE drivers 
+      SET sum_rating = COALESCE(sum_rating, 0) + $1, 
+          no_review = COALESCE(no_review, 0) + 1
+      WHERE driver_id = $2`,
+      [rating, driverId]
+    );
+
+    const newData = await pool.query(
+      `SELECT sum_rating, no_review FROM drivers WHERE driver_id = $1`,
+      [driverId]
+    );
+
+    const { sum_rating, no_review } = newData.rows[0];
+    const newRating = sum_rating / no_review;
+
+    await pool.query(
+      `UPDATE drivers SET rating = $1 WHERE driver_id = $2`,
+      [newRating, driverId]
+    );
+
+    res.status(200).json({
+      message: "Rating submitted successfully",
+      driverId,
+      newRating: newRating.toFixed(1),
+});
+
+}
+
+export { addUser, listUsers,getUserRides,userDetailes,ratingSubmited };
